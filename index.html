@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدرستي | نظام إدارة الدراسة الذكي</title>
+    <title>طريقي الدراسي | نظام إدارة الدراسة الذكي</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -32,8 +32,328 @@
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --nav-bg: rgba(15,15,26,.9);
+            --primary-soft: rgba(108,99,255,.15);
+            --active-glow: 0 8px 20px rgba(108,99,255,.4);
+            --hover-glow: 0 20px 40px rgba(108,99,255,.3);
+            --btn-glow: 0 10px 20px rgba(108,99,255,.4);
         }
 
+        /* ==================================================
+           ⚡ الثيم 1: سايبربانك — هيكل: قائمة جانبية + حواف مقطوعة
+           ================================================== */
+        body[data-theme="cyberpunk"] {
+            --primary: #00F0FF; --secondary: #FF2E88; --success: #39FF14;
+            --warning: #FFE600; --danger: #FF3131;
+            --study: #00F0FF; --fun: #FF2E88; --health: #39FF14;
+            --bg-dark: #030304; --bg-card: #0B0B11; --bg-card-hover: #11121B;
+            --text-primary: #E8FBFF; --text-secondary: #6E8291;
+            --border-color: #16323C;
+            --gradient-1: linear-gradient(135deg, #00F0FF 0%, #0080FF 100%);
+            --gradient-2: linear-gradient(135deg, #FF2E88 0%, #FF9E00 100%);
+            --gradient-3: linear-gradient(135deg, #00F0FF 0%, #7000FF 100%);
+            --gradient-4: linear-gradient(135deg, #39FF14 0%, #00F0FF 100%);
+            --gradient-5: linear-gradient(135deg, #FFE600 0%, #FF2E88 100%);
+            --nav-bg: rgba(4,4,7,.96);
+            --primary-soft: rgba(0,240,255,.12);
+            --active-glow: 0 0 20px rgba(0,240,255,.55);
+            --hover-glow: 0 0 32px rgba(0,240,255,.3);
+            --btn-glow: 0 0 18px rgba(0,240,255,.5);
+        }
+        body[data-theme="cyberpunk"] .bg-animation {
+            opacity: 1;
+            background-image:
+                linear-gradient(rgba(0,240,255,.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,240,255,.05) 1px, transparent 1px);
+            background-size: 42px 42px;
+        }
+        .scanlines {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9500; display: none;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+        }
+        body[data-theme="cyberpunk"] .scanlines { display: block; opacity: .3; }
+
+        /* هيكل سايبربانك: قائمة جانبية (سطح المكتب) */
+        @media (min-width: 901px) {
+            body[data-theme="cyberpunk"] .navbar {
+                position: fixed; top: 0; right: 0; bottom: 0; left: auto;
+                width: 215px; height: 100vh;
+                flex-direction: column; align-items: stretch; justify-content: flex-start;
+                border-bottom: none; border-left: 1px solid rgba(0,240,255,.25);
+                padding: 1.8rem 1rem;
+            }
+            body[data-theme="cyberpunk"] .navbar .logo {
+                flex-direction: column; gap: 8px; font-size: 1.2rem;
+                margin-bottom: 2.4rem; font-family: 'Orbitron', sans-serif;
+                text-align: center;
+            }
+            body[data-theme="cyberpunk"] .navbar .logo i { font-size: 2.2rem; }
+            body[data-theme="cyberpunk"] .nav-links { flex-direction: column; align-items: stretch; gap: .35rem; }
+            body[data-theme="cyberpunk"] .container { margin-right: 215px; max-width: none; padding: 2rem 2.4rem; }
+            body[data-theme="cyberpunk"] .firebase-status { right: 235px; }
+            body[data-theme="cyberpunk"] .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            body[data-theme="cyberpunk"] .stats-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        /* هيكل سايبربانك: حواف مقطوعة + محاذاة يمين */
+        body[data-theme="cyberpunk"] .page-header { text-align: right; margin-bottom: 2rem; }
+        body[data-theme="cyberpunk"] .page-header h1 {
+            display: inline-block; font-family: 'Orbitron', 'Cairo', sans-serif;
+            font-size: 1.9rem; letter-spacing: 1px;
+            filter: drop-shadow(0 0 14px rgba(0,240,255,.5));
+        }
+        body[data-theme="cyberpunk"] .page-header h1::after {
+            content: ''; display: block; height: 2px; margin-top: 8px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+        body[data-theme="cyberpunk"] .section-title h2 { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; }
+        body[data-theme="cyberpunk"] .section-title h2::before { content: '// '; color: var(--primary); }
+        body[data-theme="cyberpunk"] .subject-card {
+            text-align: right; border-radius: 0; border: 1px solid rgba(0,240,255,.22); border-top: none;
+            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+            background: linear-gradient(180deg, rgba(0,240,255,.06), transparent 45%), var(--bg-card);
+            box-shadow: none;
+        }
+        body[data-theme="cyberpunk"] .subject-card:hover { box-shadow: 0 0 26px rgba(0,240,255,.25); }
+        body[data-theme="cyberpunk"] .stat-card {
+            border-radius: 0; text-align: right;
+            clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+        }
+        body[data-theme="cyberpunk"] .stat-card { display: flex; align-items: center; gap: .8rem; }
+        body[data-theme="cyberpunk"] .stat-card i { margin: 0; font-size: 1.5rem; }
+        body[data-theme="cyberpunk"] .stat-card .number { margin: 0; font-size: 1.4rem; font-family: 'Orbitron'; }
+        body[data-theme="cyberpunk"] .stat-card .label { font-size: .72rem; }
+        body[data-theme="cyberpunk"] .lesson-section,
+        body[data-theme="cyberpunk"] .day-tab,
+        body[data-theme="cyberpunk"] .pomodoro,
+        body[data-theme="cyberpunk"] .session-active-card,
+        body[data-theme="cyberpunk"] .add-lesson-form { border-radius: 0; }
+        body[data-theme="cyberpunk"] .lesson-section { border-top: 2px solid rgba(0,240,255,.35); }
+        body[data-theme="cyberpunk"] .btn-add, body[data-theme="cyberpunk"] .btn-back,
+        body[data-theme="cyberpunk"] .btn-complete, body[data-theme="cyberpunk"] .btn-ctrl,
+        body[data-theme="cyberpunk"] .nav-btn, body[data-theme="cyberpunk"] .preset-btn,
+        body[data-theme="cyberpunk"] .difficulty-badge, body[data-theme="cyberpunk"] .type-badge,
+        body[data-theme="cyberpunk"] .history-item, body[data-theme="cyberpunk"] .sess-lesson,
+        body[data-theme="cyberpunk"] .activity-item { border-radius: 0; }
+        body[data-theme="cyberpunk"] .nav-btn { border-left: 3px solid transparent; }
+        body[data-theme="cyberpunk"] .nav-btn.active {
+            background: rgba(0,240,255,.1); color: var(--primary);
+            border-left-color: var(--primary); box-shadow: none;
+        }
+        body[data-theme="cyberpunk"] .btn-add {
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        body[data-theme="cyberpunk"] .ring-time, body[data-theme="cyberpunk"] .pomo-time {
+            font-family: 'Orbitron', sans-serif;
+        }
+        body[data-theme="cyberpunk"] .subject-card,
+        body[data-theme="cyberpunk"] .lesson-section,
+        body[data-theme="cyberpunk"] .stat-card {
+            box-shadow: 0 0 16px rgba(0,240,255,.06), inset 0 0 24px rgba(0,240,255,.03);
+        }
+
+        /* ==================================================
+           👑 الثيم 2: ذهبي ملكي — هيكل: أقواس + إطار + خط أميري
+           ================================================== */
+        body[data-theme="gold"] {
+            --primary: #D4AF37; --secondary: #E8C547; --success: #7CB342;
+            --warning: #FFB300; --danger: #E53935;
+            --study: #E8C547; --fun: #D4844C; --health: #7CB342;
+            --bg-dark: #0C0906; --bg-card: #171207; --bg-card-hover: #201809;
+            --text-primary: #FDF6E3; --text-secondary: #A89B7C;
+            --border-color: #3D3116;
+            --gradient-1: linear-gradient(135deg, #F5D547 0%, #B8860B 100%);
+            --gradient-2: linear-gradient(135deg, #E8C547 0%, #8B6914 100%);
+            --gradient-3: linear-gradient(135deg, #FFE082 0%, #6B5212 100%);
+            --gradient-4: linear-gradient(135deg, #C9A227 0%, #F5D547 100%);
+            --gradient-5: linear-gradient(135deg, #FFD700 0%, #7B5C1E 100%);
+            --nav-bg: rgba(14,10,5,.95);
+            --primary-soft: rgba(212,175,55,.14);
+            --active-glow: 0 8px 22px rgba(212,175,55,.35);
+            --hover-glow: 0 20px 40px rgba(212,175,55,.25);
+            --btn-glow: 0 10px 22px rgba(212,175,55,.35);
+        }
+        /* إطار ملكي حول الصفحة كلها */
+        body[data-theme="gold"]::before {
+            content: ''; position: fixed; inset: 8px; pointer-events: none; z-index: 5;
+            border: 1px solid rgba(212,175,55,.3); border-radius: 12px;
+            outline: 1px solid rgba(212,175,55,.12); outline-offset: 4px;
+        }
+        /* شريط علوي مركزي بخطوط زخرفية */
+        body[data-theme="gold"] .navbar {
+            flex-direction: column; justify-content: center; gap: .7rem; padding: 1.1rem;
+            background: linear-gradient(180deg, #221A0A 0%, var(--nav-bg));
+            border-bottom-color: rgba(212,175,55,.35);
+        }
+        body[data-theme="gold"] .navbar::before,
+        body[data-theme="gold"] .navbar::after {
+            content: ''; width: min(440px, 62%); height: 1px; order: 3;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+        }
+        body[data-theme="gold"] .navbar::before { order: 0; }
+        body[data-theme="gold"] .navbar .logo { font-family: 'Amiri', serif; font-size: 1.7rem; }
+        body[data-theme="gold"] .nav-links { justify-content: center; }
+        body[data-theme="gold"] .nav-btn { border-radius: 30px; border: 1px solid transparent; }
+        body[data-theme="gold"] .nav-btn.active {
+            border-color: rgba(212,175,55,.6); background: rgba(212,175,55,.12);
+            color: var(--secondary); box-shadow: none;
+        }
+        /* بطاقات بقوس ملكي + ميدالية للأيقونة */
+        body[data-theme="gold"] .subject-card {
+            border-radius: 110px 110px 22px 22px; padding: 2.6rem 1.6rem 2rem;
+            border-color: rgba(212,175,55,.3);
+            background: linear-gradient(180deg, rgba(212,175,55,.07), transparent 45%), var(--bg-card);
+        }
+        body[data-theme="gold"] .subject-card .icon {
+            border: 2px solid rgba(212,175,55,.5); border-radius: 50%;
+            padding: 14px 18px; box-shadow: 0 0 0 4px rgba(212,175,55,.1);
+        }
+        body[data-theme="gold"] .sub-card {
+            border-radius: 70px 70px 16px 16px; padding-top: 2.2rem;
+            border-color: rgba(212,175,55,.3);
+        }
+        body[data-theme="gold"] .stat-card {
+            border-color: rgba(212,175,55,.3); position: relative;
+        }
+        body[data-theme="gold"] .stat-card::before {
+            content: '✦'; position: absolute; top: 6px; right: 12px;
+            color: rgba(212,175,55,.55); font-size: .8rem;
+        }
+        body[data-theme="gold"] .stat-card::after {
+            content: '✦'; position: absolute; bottom: 6px; left: 12px;
+            color: rgba(212,175,55,.55); font-size: .8rem;
+        }
+        body[data-theme="gold"] .page-header h1 {
+            font-family: 'Amiri', serif; font-size: 2.7rem; font-weight: 700;
+            filter: drop-shadow(0 2px 10px rgba(212,175,55,.35));
+        }
+        body[data-theme="gold"] .section-title h2 { font-family: 'Amiri', serif; font-size: 1.55rem; }
+        body[data-theme="gold"] .quote-box {
+            border: 2px solid rgba(212,175,55,.45); outline: 1px solid rgba(212,175,55,.25);
+            outline-offset: 6px; border-radius: 24px; color: #241B05;
+        }
+        body[data-theme="gold"] .quote-box .quote { font-size: 1.5rem; }
+        body[data-theme="gold"] .btn-add, body[data-theme="gold"] .btn-back { border-radius: 30px; }
+        body[data-theme="gold"] .history-item { border-radius: 44px 44px 14px 14px; }
+        body[data-theme="gold"] .session-active-card {
+            border-radius: 60px 60px 24px 24px; border-color: rgba(212,175,55,.3);
+        }
+        body[data-theme="gold"] .lessons-table td { border-color: rgba(212,175,55,.22); }
+        body[data-theme="gold"] .day-tab { border-radius: 18px; }
+
+        /* ==================================================
+           🌊 الثيم 3: نور المحيط — هيكل: شريط سفلي + صفوف أفقية مسطحة
+           ================================================== */
+        body[data-theme="ocean"] {
+            --primary: #0284C7; --secondary: #E11D8F; --success: #059669;
+            --warning: #D97706; --danger: #DC2626;
+            --study: #0284C7; --fun: #E11D8F; --health: #059669;
+            --bg-dark: #EAF4FB; --bg-card: #FFFFFF; --bg-card-hover: #F0F7FD;
+            --text-primary: #0C2233; --text-secondary: #5A7184;
+            --border-color: #CFE6F5;
+            --gradient-1: linear-gradient(135deg, #38BDF8 0%, #0369A1 100%);
+            --gradient-2: linear-gradient(135deg, #F472B6 0%, #DB2777 100%);
+            --gradient-3: linear-gradient(135deg, #22D3EE 0%, #0E7490 100%);
+            --gradient-4: linear-gradient(135deg, #34D399 0%, #0D9488 100%);
+            --gradient-5: linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
+            --nav-bg: rgba(255,255,255,.94);
+            --primary-soft: rgba(2,132,199,.12);
+            --active-glow: 0 8px 20px rgba(2,132,199,.35);
+            --hover-glow: 0 20px 40px rgba(2,132,199,.2);
+            --btn-glow: 0 10px 20px rgba(2,132,199,.35);
+        }
+        body[data-theme="ocean"] .bg-animation { opacity: .14; }
+        /* شريط تنقل سفلي مثل تطبيقات الجوال */
+        body[data-theme="ocean"] .navbar {
+            position: fixed; top: auto; bottom: 0; right: 0; left: 0;
+            border-bottom: none; border-top: 1px solid var(--border-color);
+            padding: .45rem .9rem; justify-content: space-between;
+            box-shadow: 0 -4px 20px rgba(2,132,199,.08);
+        }
+        body[data-theme="ocean"] .navbar .logo { font-size: 1.05rem; gap: 6px; }
+        body[data-theme="ocean"] .navbar .logo i { font-size: 1.4rem; }
+        body[data-theme="ocean"] .nav-links { gap: .2rem; }
+        body[data-theme="ocean"] .nav-btn {
+            flex-direction: column; gap: 2px; font-size: .66rem;
+            padding: 5px 13px; border-radius: 14px;
+        }
+        body[data-theme="ocean"] .nav-btn i { font-size: 1.15rem; }
+        body[data-theme="ocean"] .nav-btn.active {
+            color: var(--primary); background: var(--primary-soft);
+        }
+        body[data-theme="ocean"] .container { padding-top: 2rem; padding-bottom: 115px; }
+        body[data-theme="ocean"] .theme-fab-wrap { bottom: 95px; }
+        body[data-theme="ocean"] .firebase-status { bottom: 95px; }
+        @media (max-width: 600px) {
+            body[data-theme="ocean"] .navbar .logo span { display: none; }
+        }
+        /* عناوين محاذاة لليمين مع شريط جانبي */
+        body[data-theme="ocean"] .page-header { text-align: right; margin-bottom: 2rem; }
+        body[data-theme="ocean"] .page-header h1 {
+            position: relative; padding-right: 16px; font-size: 2rem;
+        }
+        body[data-theme="ocean"] .page-header h1::before {
+            content: ''; position: absolute; right: 0; top: 8px; bottom: 8px;
+            width: 6px; border-radius: 4px; background: var(--gradient-1);
+        }
+        body[data-theme="ocean"] .section-title h2 {
+            position: relative; padding-right: 13px; font-size: 1.15rem;
+        }
+        body[data-theme="ocean"] .section-title h2::before {
+            content: ''; position: absolute; right: 0; top: 6px; bottom: 6px;
+            width: 4px; border-radius: 4px; background: var(--gradient-1);
+        }
+        /* بطاقات المواد = صفوف أفقية عريضة */
+        body[data-theme="ocean"] .cards-grid { grid-template-columns: 1fr; gap: 1rem; }
+        body[data-theme="ocean"] .subject-card {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+            text-align: right; padding: 1.2rem 1.5rem; border-radius: 18px;
+            border: none; box-shadow: 0 2px 14px rgba(2,132,199,.09);
+        }
+        body[data-theme="ocean"] .subject-card:hover { transform: translateY(-3px); }
+        body[data-theme="ocean"] .subject-card .icon { order: 1; font-size: 2.3rem; margin: 0; }
+        body[data-theme="ocean"] .subject-card h3 { order: 2; margin: 0; font-size: 1.15rem; }
+        body[data-theme="ocean"] .subject-card p { order: 3; flex: 1; margin: 0; }
+        body[data-theme="ocean"] .subject-card .progress-mini { order: 4; width: 100%; margin: 4px 0 0; }
+        body[data-theme="ocean"] .subject-card::before { height: 4px; }
+        /* بطاقات إحصائيات أفقية */
+        body[data-theme="ocean"] .stats-grid { gap: 1rem; }
+        body[data-theme="ocean"] .stat-card {
+            display: flex; align-items: center; gap: .9rem; text-align: right;
+            border: none; border-radius: 18px; padding: 1rem 1.2rem;
+            box-shadow: 0 2px 14px rgba(2,132,199,.09);
+        }
+        body[data-theme="ocean"] .stat-card i { margin: 0; font-size: 1.6rem; }
+        body[data-theme="ocean"] .stat-card .number { margin: 0; font-size: 1.5rem; }
+        body[data-theme="ocean"] .stat-card .label { font-size: .74rem; }
+        /* أزرار حبوب مسطحة */
+        body[data-theme="ocean"] .btn-add, body[data-theme="ocean"] .btn-back,
+        body[data-theme="ocean"] .btn-complete, body[data-theme="ocean"] .btn-ctrl,
+        body[data-theme="ocean"] .preset-btn { border-radius: 50px; }
+        body[data-theme="ocean"] .sub-card {
+            border: none; border-radius: 18px;
+            box-shadow: 0 2px 14px rgba(2,132,199,.09);
+        }
+        body[data-theme="ocean"] .lesson-section { border: none; border-radius: 20px; box-shadow: 0 2px 14px rgba(2,132,199,.09); }
+        body[data-theme="ocean"] .quote-box { text-align: right; padding: 1.4rem 1.6rem; border-radius: 18px; }
+        body[data-theme="ocean"] .day-tab { border-radius: 16px; border-width: 1px; }
+        body[data-theme="ocean"] .activity-item {
+            border: none; border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(2,132,199,.08);
+        }
+        body[data-theme="ocean"] .history-item { border: none; border-radius: 16px; box-shadow: 0 2px 12px rgba(2,132,199,.08); }
+        body[data-theme="ocean"] .lessons-table td { border: none; }
+        body[data-theme="ocean"] .lessons-table td:first-child { border-radius: 0 16px 16px 0; }
+        body[data-theme="ocean"] .lessons-table td:last-child { border-radius: 16px 0 0 16px; }
+        body[data-theme="ocean"] .lessons-table tr:hover td { background: rgba(2,132,199,.06); }
+        body[data-theme="ocean"] .session-active-card {
+            border: none; border-radius: 20px;
+            box-shadow: 0 2px 14px rgba(2,132,199,.09);
+        }
+        body[data-theme="ocean"] .sess-lesson { border: none; border-radius: 14px; box-shadow: 0 1px 8px rgba(2,132,199,.07); }
+        body[data-theme="ocean"] .pomodoro { border: none; border-radius: 20px; box-shadow: 0 2px 14px rgba(2,132,199,.09); }
+        body[data-theme="ocean"] .toast { box-shadow: 0 10px 30px rgba(2,132,199,.25); }
+
+        /* ===================== الأساسيات ===================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
 
         body {
@@ -41,9 +361,10 @@
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background .45s ease, color .45s ease;
         }
 
-        .bg-animation { position: fixed; inset: 0; z-index: -1; opacity: 0.1; pointer-events: none; }
+        .bg-animation { position: fixed; inset: 0; z-index: -1; opacity: 0.1; pointer-events: none; transition: opacity .45s; }
         .bg-animation::before {
             content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
             background: var(--primary); filter: blur(100px); top: 10%; right: 10%;
@@ -58,10 +379,11 @@
         @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(50px,-50px) scale(.8)} }
 
         .navbar {
-            background: rgba(15,15,26,.9); backdrop-filter: blur(20px);
+            background: var(--nav-bg); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
             padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000;
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem;
+            transition: background .45s;
         }
         .navbar .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 800; cursor: pointer; }
         .navbar .logo i { color: var(--primary); font-size: 1.8rem; }
@@ -100,13 +422,15 @@
         .subject-card.biology::before { background: var(--gradient-4); }
         .subject-card.islamic::before { background: var(--gradient-5); }
         .subject-card.activities::before { background: var(--gradient-2); }
-        .subject-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(108,99,255,.3); background: var(--bg-card-hover); }
+        .subject-card.session::before { background: var(--gradient-2); }
+        .subject-card:hover { transform: translateY(-8px); box-shadow: var(--hover-glow); background: var(--bg-card-hover); }
         .subject-card .icon { font-size: 3.2rem; margin-bottom: 1rem; display: inline-block; }
         .subject-card.arabic .icon { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subject-card.english .icon { background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subject-card.biology .icon { background: var(--gradient-4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subject-card.islamic .icon { background: var(--gradient-5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subject-card.activities .icon { background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card.session .icon { background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subject-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: .4rem; }
         .subject-card p { color: var(--text-secondary); font-size: .88rem; }
         .progress-mini { margin-top: 1rem; height: 6px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
@@ -117,7 +441,7 @@
             background: var(--bg-card); border-radius: 16px; padding: 1.5rem; text-align: center;
             cursor: pointer; transition: all .3s; border: 1px solid var(--border-color);
         }
-        .sub-card:hover { transform: scale(1.05); border-color: var(--primary); box-shadow: 0 10px 30px rgba(108,99,255,.2); }
+        .sub-card:hover { transform: scale(1.05); border-color: var(--primary); box-shadow: var(--hover-glow); }
         .sub-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
 
         .lesson-section { background: var(--bg-card); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-color); }
@@ -129,7 +453,7 @@
             border-radius: 12px; cursor: pointer; font-size: .95rem; font-weight: 600;
             display: flex; align-items: center; gap: 8px; transition: all .3s;
         }
-        .btn-add:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(108,99,255,.4); }
+        .btn-add:hover { transform: scale(1.05); box-shadow: var(--btn-glow); }
 
         .add-lesson-form {
             background: var(--bg-card-hover); border-radius: 16px; padding: 1.5rem;
@@ -175,7 +499,6 @@
         .progress-bar { height: 12px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
         .progress-bar .fill { height: 100%; background: var(--gradient-4); border-radius: 10px; transition: width .5s ease; }
 
-        /* ===== صفحة الجدول الأسبوعي ===== */
         .day-tabs-wrap { overflow-x: auto; padding-bottom: 8px; margin-bottom: 1.5rem; }
         .day-tabs { display: grid; grid-template-columns: repeat(7, minmax(100px, 1fr)); gap: 8px; min-width: 730px; }
         .day-tab {
@@ -183,7 +506,7 @@
             padding: 12px 6px; text-align: center; cursor: pointer; transition: all .3s; position: relative;
         }
         .day-tab:hover { border-color: var(--primary); transform: translateY(-3px); }
-        .day-tab.active { background: var(--gradient-1); border-color: transparent; box-shadow: 0 8px 20px rgba(108,99,255,.4); }
+        .day-tab.active { background: var(--gradient-1); border-color: transparent; box-shadow: var(--active-glow); }
         .day-tab.today:not(.active) { border-color: var(--warning); }
         .day-tab.today:not(.active)::after {
             content: 'اليوم'; position: absolute; top: -9px; right: 50%; transform: translateX(50%);
@@ -241,7 +564,6 @@
         .act-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
         .act-actions { display: flex; gap: .5rem; align-items: center; }
 
-        /* ===== مؤقت التركيز (بومودورو) ===== */
         .pomodoro {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px;
             padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;
@@ -313,6 +635,172 @@
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .3; }
         .hidden { display: none !important; }
 
+        /* ===== زر الثيمات العائم ===== */
+        .theme-fab-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 9999; }
+        .theme-fab {
+            width: 62px; height: 62px; border-radius: 50%; border: none; cursor: pointer;
+            background: var(--gradient-2); color: #fff; font-size: 1.55rem;
+            box-shadow: 0 8px 26px rgba(0,0,0,.45);
+            transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+            animation: fabPulse 3s infinite;
+        }
+        .theme-fab:hover { transform: scale(1.12) rotate(18deg); }
+        @keyframes fabPulse {
+            0%,100% { box-shadow: 0 8px 26px rgba(0,0,0,.45), 0 0 0 0 rgba(128,128,128,.4); }
+            50% { box-shadow: 0 8px 26px rgba(0,0,0,.45), 0 0 0 16px rgba(128,128,128,0); }
+        }
+        .theme-menu {
+            position: absolute; bottom: 76px; left: 0;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: .8rem; width: 265px;
+            opacity: 0; visibility: hidden; transform: translateY(16px) scale(.92);
+            transition: all .3s cubic-bezier(.34,1.56,.64,1);
+            box-shadow: 0 18px 45px rgba(0,0,0,.55);
+        }
+        .theme-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .theme-menu h4 {
+            font-size: .82rem; color: var(--text-secondary); margin-bottom: .6rem;
+            padding: 0 .4rem; display: flex; align-items: center; gap: 6px;
+        }
+        .theme-option {
+            display: flex; align-items: center; gap: .7rem; width: 100%;
+            background: none; border: 1px solid transparent; border-radius: 12px;
+            padding: .6rem .7rem; cursor: pointer; transition: all .25s;
+            color: var(--text-primary); font-family: 'Cairo'; text-align: right; font-size: .88rem;
+        }
+        .theme-option:hover { background: var(--bg-card-hover); border-color: var(--border-color); transform: translateX(-4px); }
+        .theme-option.active { border-color: var(--primary); background: var(--primary-soft); }
+        .theme-swatch { display: flex; gap: 3px; flex-shrink: 0; }
+        .theme-swatch span { width: 13px; height: 13px; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+        .theme-option .to-name { flex: 1; font-weight: 700; }
+        .theme-option .to-check { color: var(--success); opacity: 0; transition: opacity .2s; }
+        .theme-option.active .to-check { opacity: 1; }
+
+        /* ===== جلسة الدراسة ===== */
+        .session-setup-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.5rem; align-items: start; }
+        .duration-inputs { display: flex; gap: 1rem; }
+        .duration-inputs .form-group { flex: 1; }
+
+        .preset-btns { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .5rem; }
+        .preset-btn {
+            background: var(--bg-card-hover); border: 1px solid var(--border-color);
+            color: var(--text-secondary); padding: 6px 16px; border-radius: 20px;
+            cursor: pointer; transition: all .3s; font-size: .85rem; font-family: 'Cairo';
+        }
+        .preset-btn:hover { border-color: var(--primary); color: #fff; transform: scale(1.05); }
+
+        .pick-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: .6rem; flex-wrap: wrap; gap: .5rem;
+        }
+        .pick-count-badge {
+            background: var(--primary-soft); color: var(--primary);
+            padding: 4px 14px; border-radius: 20px; font-size: .82rem; font-weight: 700;
+        }
+        .pick-actions { display: flex; gap: .5rem; }
+        .lessons-pick-list {
+            max-height: 330px; overflow-y: auto; padding-left: 4px;
+            display: flex; flex-direction: column; gap: .55rem;
+        }
+        .lessons-pick-list::-webkit-scrollbar { width: 6px; }
+        .lessons-pick-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 6px; }
+        .pick-hint { color: var(--text-secondary); font-size: .78rem; margin-top: .6rem; }
+
+        .session-active-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 2rem; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap; justify-content: center;
+        }
+        .timer-ring { position: relative; width: 230px; height: 230px; }
+        .timer-ring svg { transform: rotate(-90deg); }
+        .timer-ring .ring-bg { stroke: var(--border-color); }
+        .timer-ring .ring-fill { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+        .timer-ring.overtime .ring-fill { stroke: var(--danger); }
+        .ring-center {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .ring-time {
+            font-size: 2.6rem; font-weight: 900; direction: ltr;
+            font-variant-numeric: tabular-nums;
+            background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .timer-ring.overtime .ring-time { background: var(--danger); -webkit-background-clip: text; }
+
+        .session-info-side { flex: 1; min-width: 240px; text-align: center; }
+        .session-info-side .si-subject { font-size: 1.4rem; font-weight: 800; margin-bottom: .5rem; }
+        .session-info-side .si-cat { color: var(--text-secondary); margin-bottom: 1rem; }
+        .session-state-badge {
+            display: inline-block; padding: 6px 18px; border-radius: 20px;
+            font-size: .85rem; font-weight: 700; margin-bottom: 1.2rem;
+        }
+        .session-state-badge.running { background: rgba(67,233,123,.15); color: var(--health); }
+        .session-state-badge.paused { background: rgba(255,152,0,.15); color: var(--warning); }
+        .session-state-badge.overtime { background: rgba(244,67,54,.15); color: var(--danger); }
+
+        .session-ctrl-btns { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+        .btn-ctrl {
+            border: none; padding: 12px 22px; border-radius: 12px; cursor: pointer;
+            font-size: .95rem; font-weight: 700; color: white;
+            display: inline-flex; align-items: center; gap: 8px; transition: all .3s; font-family: 'Cairo';
+        }
+        .btn-ctrl:hover { transform: scale(1.05); }
+        .btn-ctrl.pause { background: var(--gradient-5); }
+        .btn-ctrl.resume { background: var(--gradient-4); }
+        .btn-ctrl.finish { background: var(--gradient-1); }
+        .btn-ctrl.discard { background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--danger); }
+
+        .overtime-alert {
+            display: none; width: 100%; text-align: center; margin-top: .5rem;
+            background: rgba(244,67,54,.12); color: var(--danger);
+            padding: 10px; border-radius: 12px; font-weight: 700; animation: fadeIn .3s;
+        }
+        .overtime-alert.show { display: block; }
+
+        .sess-lesson {
+            display: flex; align-items: center; gap: .9rem;
+            background: var(--bg-card-hover); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: .85rem 1.1rem; margin-bottom: .6rem;
+            transition: all .3s; flex-wrap: wrap;
+        }
+        .sess-lesson:hover { border-color: var(--primary); }
+        .sess-lesson:has(input:checked) { border-color: var(--success); background: rgba(76,175,80,.07); }
+        .sess-lesson.is-done { opacity: .6; }
+        .sess-lesson input[type="checkbox"] {
+            width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; flex-shrink: 0;
+        }
+        .sess-lesson .sl-name { flex: 1; font-weight: 600; min-width: 150px; }
+        .sess-lesson.is-done .sl-name { text-decoration: line-through; }
+
+        .session-notes {
+            width: 100%; min-height: 140px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            color: var(--text-primary); padding: 1rem; font-family: 'Cairo';
+            font-size: 1rem; resize: vertical; line-height: 1.8; transition: border-color .3s;
+        }
+        .session-notes:focus { outline: none; border-color: var(--primary); }
+        .notes-hint { color: var(--text-secondary); font-size: .78rem; margin-top: .5rem; }
+
+        .history-item {
+            display: flex; align-items: center; gap: 1.2rem;
+            background: var(--bg-card-hover); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 1rem 1.3rem; margin-bottom: .7rem;
+            transition: all .3s; animation: fadeIn .3s ease;
+        }
+        .history-item:hover { transform: translateX(-5px); border-color: var(--primary); }
+        .h-icon {
+            width: 48px; height: 48px; border-radius: 12px; background: var(--primary-soft);
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+        }
+        .h-main { flex: 1; }
+        .h-title { font-weight: 700; margin-bottom: .3rem; }
+        .h-meta { color: var(--text-secondary); font-size: .8rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .h-note {
+            margin-top: .5rem; font-size: .82rem; color: var(--text-secondary);
+            background: var(--bg-dark); border-radius: 8px; padding: .5rem .8rem;
+            border-right: 3px solid var(--primary);
+        }
+
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .navbar { padding: 1rem; }
@@ -324,20 +812,29 @@
             .act-main { width: 100%; order: 3; }
             .lessons-table { font-size: .8rem; }
             .lessons-table td { padding: 10px; }
+            .session-setup-grid { grid-template-columns: 1fr; }
+            .session-active-card { flex-direction: column; gap: 1.5rem; }
+            .ring-time { font-size: 2.2rem; }
+            .theme-fab { width: 54px; height: 54px; font-size: 1.3rem; }
+            .theme-menu { width: 240px; }
         }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
+    <div class="scanlines"></div>
 
     <nav class="navbar">
         <div class="logo" onclick="showPage('home')">
             <i class="fas fa-graduation-cap"></i>
-            <span>مدرستي</span>
+            <span>طريقي الدراسي</span>
         </div>
         <div class="nav-links">
             <button class="nav-btn active" data-page="home" onclick="showPage('home')">
                 <i class="fas fa-home"></i> الرئيسية
+            </button>
+            <button class="nav-btn" data-page="session" onclick="showPage('session')">
+                <i class="fas fa-bullseye"></i> جلسة دراسة
             </button>
             <button class="nav-btn" data-page="schedule" onclick="showPage('schedule')">
                 <i class="fas fa-calendar-week"></i> جدول الأسبوع
@@ -352,7 +849,7 @@
         <!-- ===== الرئيسية ===== -->
         <div class="page active" id="page-home">
             <div class="page-header">
-                <h1>مرحباً بك في مدرستي 📚</h1>
+                <h1>مرحباً بك في طريقي الدراسي 📚</h1>
                 <p>نظّم وقتك، تابع دروسك، حقق أهدافك</p>
             </div>
 
@@ -381,6 +878,11 @@
                     <div class="label">دروس مكتملة</div>
                 </div>
                 <div class="stat-card">
+                    <i class="fas fa-stopwatch" style="color:var(--secondary);"></i>
+                    <div class="number" id="homeStudyTime">0 د</div>
+                    <div class="label">وقت الدراسة الكلي</div>
+                </div>
+                <div class="stat-card">
                     <i class="fas fa-fire" style="color:var(--warning);"></i>
                     <div class="number" id="streakDays">0</div>
                     <div class="label">أيام متتالية</div>
@@ -388,6 +890,12 @@
             </div>
 
             <div class="cards-grid">
+                <div class="subject-card session" onclick="showPage('session')">
+                    <i class="fas fa-bullseye icon"></i>
+                    <h3>🎯 جلسة دراسة</h3>
+                    <p>مؤقت + دروسك + ملاحظاتك في مكان واحد</p>
+                    <div class="progress-mini"><div class="bar" style="background:var(--gradient-2); width:0%"></div></div>
+                </div>
                 <div class="subject-card arabic" onclick="openSubject('arabic')">
                     <i class="fas fa-language icon"></i>
                     <h3>اللغة العربية</h3>
@@ -503,6 +1011,148 @@
             </div>
         </div>
 
+        <!-- ===== جلسة الدراسة ===== -->
+        <div class="page" id="page-session">
+            <div class="page-header">
+                <h1>🎯 جلسة دراسة مركزة</h1>
+                <p>اختر دروسك بنفسك، حدد الوقت، دوّن ملاحظاتك.. وأنهِ كالبطل! 💪</p>
+            </div>
+
+            <div id="sessionSetup">
+                <div class="lesson-section" style="margin-bottom: 1.5rem;">
+                    <div class="section-title">
+                        <h2><i class="fas fa-sliders-h"></i> إعداد الجلسة</h2>
+                    </div>
+                    <div class="session-setup-grid">
+                        <div>
+                            <div class="form-group">
+                                <label><i class="fas fa-book"></i> المادة التي سأدرسها</label>
+                                <select id="sessSubject" onchange="onSessionSubjectChange()"></select>
+                            </div>
+                            <div class="form-group" id="sessCatGroup">
+                                <label><i class="fas fa-folder"></i> القسم</label>
+                                <select id="sessCategory" onchange="onSessionSubjectChange()"></select>
+                            </div>
+                            <label style="display:block; margin-bottom:.5rem; color:var(--text-secondary); font-size:.9rem;">
+                                <i class="fas fa-clock"></i> مدة الدراسة
+                            </label>
+                            <div class="duration-inputs">
+                                <div class="form-group">
+                                    <input type="number" id="sessHours" min="0" max="12" value="0" />
+                                    <small style="color:var(--text-secondary);">ساعة</small>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="sessMinutes" min="0" max="59" value="25" />
+                                    <small style="color:var(--text-secondary);">دقيقة</small>
+                                </div>
+                            </div>
+                            <div class="preset-btns">
+                                <button class="preset-btn" onclick="setPreset(0,25)">⚡ 25 د</button>
+                                <button class="preset-btn" onclick="setPreset(0,45)">📘 45 د</button>
+                                <button class="preset-btn" onclick="setPreset(1,0)">⏰ ساعة</button>
+                                <button class="preset-btn" onclick="setPreset(1,30)">🔥 90 د</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="pick-header">
+                                <span style="font-weight:700;"><i class="fas fa-tasks"></i> اختر الدروس التي ستنهيها</span>
+                                <span class="pick-count-badge" id="pickCount">0 درس</span>
+                            </div>
+                            <div class="pick-actions">
+                                <button class="preset-btn" onclick="selectAllSetupLessons(true)">
+                                    <i class="fas fa-check-double"></i> تحديد الكل
+                                </button>
+                                <button class="preset-btn" onclick="selectAllSetupLessons(false)">
+                                    <i class="fas fa-eraser"></i> إلغاء الكل
+                                </button>
+                            </div>
+                            <div class="lessons-pick-list" id="sessLessonsPick"></div>
+                            <div class="pick-hint">
+                                <i class="fas fa-info-circle"></i> فقط الدروس غير المكتملة تظهر هنا — اختر درساً واحداً على الأقل لبدء الجلسة
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-add" style="width:100%; justify-content:center; margin-top:1.5rem; padding:15px; font-size:1.05rem;" onclick="startSession()">
+                        <i class="fas fa-play"></i> ابدأ جلسة الدراسة
+                    </button>
+                </div>
+            </div>
+
+            <div id="sessionActive" class="hidden">
+                <div class="session-active-card">
+                    <div class="timer-ring" id="timerRing">
+                        <svg width="230" height="230">
+                            <defs>
+                                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#43e97b" />
+                                    <stop offset="100%" stop-color="#4facfe" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="ring-bg" cx="115" cy="115" r="100" stroke-width="14" fill="none" />
+                            <circle class="ring-fill" id="ringFill" cx="115" cy="115" r="100" stroke-width="14" fill="none"
+                                    stroke-dasharray="628.3" stroke-dashoffset="0" />
+                        </svg>
+                        <div class="ring-center">
+                            <div class="ring-time" id="sessTimeDisplay">25:00</div>
+                            <div style="color:var(--text-secondary); font-size:.8rem;" id="sessTimeLabel">الوقت المتبقي</div>
+                        </div>
+                    </div>
+
+                    <div class="session-info-side">
+                        <div class="si-subject" id="sessActiveSubject"></div>
+                        <div class="si-cat" id="sessActiveCat"></div>
+                        <div class="session-state-badge running" id="sessStateBadge">▶️ جارية الآن</div>
+                        <div class="session-ctrl-btns">
+                            <button class="btn-ctrl pause" id="btnPauseToggle" onclick="togglePause()">
+                                <i class="fas fa-pause"></i> إيقاف مؤقت
+                            </button>
+                            <button class="btn-ctrl finish" onclick="endSession()">
+                                <i class="fas fa-flag-checkered"></i> إنهاء وحفظ
+                            </button>
+                            <button class="btn-ctrl discard" onclick="discardSession()">
+                                <i class="fas fa-trash"></i> إلغاء
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overtime-alert" id="overtimeAlert">
+                        ⏰ انتهى الوقت! أكمل ما تبقى من دروسك ثم اضغط "إنهاء وحفظ"
+                    </div>
+                </div>
+
+                <div class="lesson-section" style="margin-bottom: 1.5rem;">
+                    <div class="section-title">
+                        <h2><i class="fas fa-tasks"></i> دروس هذه الجلسة</h2>
+                        <span style="color:var(--text-secondary); font-size:.85rem;">
+                            ✅ ضع علامة على الدرس عند إنهائه
+                        </span>
+                    </div>
+                    <div id="sessionLessonsList"></div>
+                </div>
+
+                <div class="lesson-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-pen-fancy"></i> ملاحظات الجلسة</h2>
+                    </div>
+                    <textarea class="session-notes" id="sessionNotes" 
+                              placeholder="اكتب هنا أهم ما تعلمته، الأفكار، أسئلة تحتاج مراجعة لاحقاً..."></textarea>
+                    <div class="notes-hint"><i class="fas fa-cloud"></i> تُحفظ ملاحظاتك تلقائياً أثناء الكتابة</div>
+                </div>
+            </div>
+
+            <div class="lesson-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-history"></i> سجل الجلسات</h2>
+                    <span class="type-badge study" style="font-size:.85rem;">
+                        <i class="fas fa-stopwatch"></i> إجمالي: <span id="historyTotalTime">0 د</span>
+                    </span>
+                </div>
+                <div id="sessionsHistory"></div>
+            </div>
+        </div>
+
         <!-- ===== الجدول الأسبوعي ===== -->
         <div class="page" id="page-schedule">
             <div class="page-header">
@@ -510,18 +1160,15 @@
                 <p>7 أيام في الأسبوع - نظّم أنشطتك الدراسية والترفيهية والصحية</p>
             </div>
 
-            <!-- تبويبات الأيام -->
             <div class="day-tabs-wrap">
                 <div class="day-tabs" id="dayTabs"></div>
             </div>
 
-            <!-- رأس اليوم المحدد -->
             <div class="day-header">
                 <h3 id="selectedDayName"></h3>
                 <div class="day-type-stats" id="dayTypeStats"></div>
             </div>
 
-            <!-- نموذج إضافة نشاط -->
             <div class="lesson-section" style="margin-bottom: 1.5rem;">
                 <div class="section-title">
                     <h2><i class="fas fa-plus-circle"></i> إضافة نشاط جديد</h2>
@@ -556,7 +1203,6 @@
                 </div>
             </div>
 
-            <!-- قائمة الأنشطة -->
             <div class="lesson-section">
                 <div class="section-title">
                     <h2><i class="fas fa-tasks"></i> أنشطة اليوم</h2>
@@ -564,7 +1210,6 @@
                 <div id="activitiesList"></div>
             </div>
 
-            <!-- مؤقت التركيز -->
             <div class="pomodoro">
                 <div class="pomo-time" id="pomoDisplay">25:00</div>
                 <div class="pomo-btns">
@@ -600,7 +1245,12 @@
                     <div class="label">نسبة الإنجاز</div>
                 </div>
                 <div class="stat-card">
-                    <i class="fas fa-calendar-week" style="color:var(--secondary);"></i>
+                    <i class="fas fa-stopwatch" style="color:var(--secondary);"></i>
+                    <div class="number" id="statStudyTime">0 د</div>
+                    <div class="label">وقت الدراسة الكلي</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-week" style="color:var(--health);"></i>
                     <div class="number" id="statActivities">0</div>
                     <div class="label">أنشطة الأسبوع</div>
                 </div>
@@ -613,6 +1263,14 @@
                 <div id="subjectProgress"></div>
             </div>
         </div>
+    </div>
+
+    <!-- ===== زر الثيمات العائم ===== -->
+    <div class="theme-fab-wrap">
+        <div class="theme-menu" id="themeMenu"></div>
+        <button class="theme-fab" id="themeFab" onclick="toggleThemeMenu()" title="تغيير شكل الموقع">
+            <i class="fas fa-palette"></i>
+        </button>
     </div>
 
     <div class="firebase-status disconnected" id="fbStatus">
@@ -645,7 +1303,6 @@
             db = firebase.firestore();
         } catch (e) { console.error(e); }
 
-        // فحص حقيقي للاتصال (قراءة فعلية وليس مجرد تهيئة)
         async function checkFirebase() {
             try {
                 await db.collection('lessons').limit(1).get();
@@ -665,6 +1322,52 @@
             text.textContent = connected ? 'Firebase متصل ✓' : 'تخزين محلي (تحقق من Firestore)';
         }
 
+        // ============================================================
+        // ============ نظام الثيمات (بنية + ألوان) ===================
+        // ============================================================
+        const THEMES = [
+            { id: 'cosmic',    name: '🌌 كوني داكن — بطاقات شبكية',      swatches: ['#6C63FF', '#FF6584', '#1A1A2E'] },
+            { id: 'cyberpunk', name: '⚡ سايبربانك — قائمة جانبية',      swatches: ['#00F0FF', '#39FF14', '#FF2E88'] },
+            { id: 'gold',      name: '👑 ملكي ذهبي — أقواس وإطار',       swatches: ['#FFD700', '#B8860B', '#171207'] },
+            { id: 'ocean',     name: '🌊 المحيط — شريط سفلي وصفوف',      swatches: ['#38BDF8', '#34D399', '#FFFFFF'] }
+        ];
+
+        function toggleThemeMenu() {
+            document.getElementById('themeMenu').classList.toggle('open');
+        }
+
+        function renderThemeMenu() {
+            const current = localStorage.getItem('site_theme') || 'gold';
+            document.getElementById('themeMenu').innerHTML =
+                '<h4><i class="fas fa-shapes"></i> اختر شكل موقعك (بنية كاملة)</h4>' +
+                THEMES.map(t => `
+                <button class="theme-option ${t.id === current ? 'active' : ''}" onclick="applyTheme('${t.id}')">
+                    <span class="theme-swatch">${t.swatches.map(c => `<span style="background:${c}"></span>`).join('')}</span>
+                    <span class="to-name">${t.name}</span>
+                    <i class="fas fa-check-circle to-check"></i>
+                </button>`).join('');
+        }
+
+        function applyTheme(id) {
+            if (id === 'cosmic') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', id);
+            }
+            localStorage.setItem('site_theme', id);
+            renderThemeMenu();
+            const t = THEMES.find(x => x.id === id);
+            showToast(`تم تحويل الموقع بالكامل: ${t.name} ✨`, 'success');
+            setTimeout(() => document.getElementById('themeMenu').classList.remove('open'), 300);
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.querySelector('.theme-fab-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('themeMenu').classList.remove('open');
+            }
+        });
+
         // ===== أدوات مساعدة =====
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
@@ -683,9 +1386,28 @@
 
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
-            document.getElementById('toastText').textContent = message;
+            const toastText = document.getElementById('toastText');
+            if (!toast || !toastText) return;
+
+            toastText.textContent = message;
             toast.className = `toast ${type} show`;
-            setTimeout(() => toast.classList.remove('show'), 3000);
+
+            clearTimeout(toast.hideTimer);
+            toast.hideTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2600);
+        }
+
+        function formatDuration(totalSec) {
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            if (h > 0) return `${h} س ${m} د`;
+            return `${m} د`;
+        }
+
+        function formatDateAr(iso) {
+            const d = new Date(iso);
+            return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
         }
 
         // ===== تعريف المواد =====
@@ -758,13 +1480,13 @@
         }
 
         // ===== تخزين البيانات (مزدوج: Firebase + محلي) =====
-        let lessonsCache = {};   // { categoryId: [lessons] }
-        let allActivities = [];  // كل أنشطة الأسبوع
+        let lessonsCache = {};
+        let allActivities = [];
+        let allSessions = [];
 
         async function loadAllLessons() {
             if (firebaseReady) {
                 try {
-                    // بدون orderBy لتجنب مشكلة الفهرس المركب - الترتيب يتم محلياً
                     const snapshot = await db.collection('lessons').get();
                     const all = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     lessonsCache = {};
@@ -777,7 +1499,6 @@
                         lessonsCache[cat].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
                         saveToLocal(`lessons_${cat}`, lessonsCache[cat]);
                     });
-                    // ملء الفئات الفارغة
                     Object.values(subjects).forEach(s => s.sub.forEach(sub => {
                         if (!lessonsCache[sub.id]) lessonsCache[sub.id] = [];
                     }));
@@ -786,7 +1507,6 @@
                     console.error('Firebase load failed:', e);
                 }
             }
-            // نسخة احتياطية من الذاكرة المحلية
             lessonsCache = {};
             Object.values(subjects).forEach(s => s.sub.forEach(sub => {
                 lessonsCache[sub.id] = getFromLocal(`lessons_${sub.id}`);
@@ -807,14 +1527,25 @@
             allActivities = getFromLocal('activities_all');
         }
 
-        // حفظ الدرس في المخزنين معاً
+        async function loadAllSessions() {
+            if (firebaseReady) {
+                try {
+                    const snapshot = await db.collection('sessions').get();
+                    allSessions = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    saveToLocal('sessions_all', allSessions);
+                    return;
+                } catch (e) {
+                    console.error('Firebase load sessions failed:', e);
+                }
+            }
+            allSessions = getFromLocal('sessions_all');
+        }
+
         async function addLessonToStores(lesson) {
             lesson.id = generateId();
-            // محلي فوراً
             if (!lessonsCache[lesson.category]) lessonsCache[lesson.category] = [];
             lessonsCache[lesson.category].push(lesson);
             saveToLocal(`lessons_${lesson.category}`, lessonsCache[lesson.category]);
-            // Firebase
             if (firebaseReady) {
                 try {
                     await db.collection('lessons').doc(lesson.id).set(lesson);
@@ -856,7 +1587,6 @@
             }
         }
 
-        // أنشطة الأسبوع
         async function addActivityToStores(activity) {
             activity.id = generateId();
             allActivities.push(activity);
@@ -892,6 +1622,29 @@
             }
         }
 
+        async function addSessionToStores(session) {
+            session.id = generateId();
+            allSessions.unshift(session);
+            saveToLocal('sessions_all', allSessions);
+            if (firebaseReady) {
+                try {
+                    await db.collection('sessions').doc(session.id).set(session);
+                } catch (e) {
+                    console.error(e);
+                    showToast('تم الحفظ محلياً فقط (Firebase غير متاح)', 'error');
+                }
+            }
+            return session.id;
+        }
+
+        async function deleteSessionStores(sessionId) {
+            allSessions = allSessions.filter(s => s.id !== sessionId);
+            saveToLocal('sessions_all', allSessions);
+            if (firebaseReady) {
+                try { await db.collection('sessions').doc(sessionId).delete(); } catch (e) { console.error(e); }
+            }
+        }
+
         // ===== التنقل =====
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -902,6 +1655,7 @@
             });
 
             if (pageId === 'schedule') initSchedule();
+            if (pageId === 'session') initSession();
             if (pageId === 'stats') renderStats();
             if (pageId === 'home') { updateHomeStats(); renderNextActivity(); }
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -960,12 +1714,7 @@
                 emptyState.classList.add('hidden');
                 table.classList.remove('hidden');
                 tbody.innerHTML = lessons.map(lesson => {
-                    const diffMap = {
-                        easy: { label: '🟢 سهل', cls: 'difficulty-easy' },
-                        medium: { label: '🟡 متوسط', cls: 'difficulty-medium' },
-                        hard: { label: '🔴 صعب', cls: 'difficulty-hard' }
-                    };
-                    const d = diffMap[lesson.difficulty] || diffMap.easy;
+                    const d = DIFF_MAP[lesson.difficulty] || DIFF_MAP.easy;
                     return `
                     <tr>
                         <td style="font-weight:600;">${lesson.name}</td>
@@ -1038,6 +1787,423 @@
             document.getElementById('progressPercent').textContent = percent + '%';
         }
 
+        // ============================================================
+        // ============ جلسة الدراسة (Study Session) ==================
+        // ============================================================
+        let sessionState = 'idle';
+        let sessionTotal = 0;
+        let sessionRemaining = 0;
+        let sessionElapsed = 0;
+        let sessionInterval = null;
+        let sessionData = null;
+        let sessionSelectedLessons = new Set();
+        const checkedLessonIds = new Set();
+        const RING_LEN = 628.3;
+
+        const DIFF_MAP = {
+            easy: { label: '🟢 سهل', cls: 'difficulty-easy' },
+            medium: { label: '🟡 متوسط', cls: 'difficulty-medium' },
+            hard: { label: '🔴 صعب', cls: 'difficulty-hard' }
+        };
+
+        function initSession() {
+            if (sessionState === 'idle') {
+                populateSessionSubjects();
+                showSessionSetupView();
+            }
+            renderSessionHistory();
+        }
+
+        function populateSessionSubjects() {
+            const sel = document.getElementById('sessSubject');
+            sel.innerHTML = Object.entries(subjects).map(([key, s]) =>
+                `<option value="${key}">${s.name}</option>`
+            ).join('');
+            onSessionSubjectChange();
+        }
+
+        function onSessionSubjectChange() {
+            const key = document.getElementById('sessSubject').value;
+            const subject = subjects[key];
+            const catGroup = document.getElementById('sessCatGroup');
+
+            if (subject.hasSub) {
+                catGroup.classList.remove('hidden');
+                const catSel = document.getElementById('sessCategory');
+                const prev = catSel.value;
+                catSel.innerHTML = subject.sub.map(s =>
+                    `<option value="${s.id}">${s.name}</option>`
+                ).join('');
+                if (prev && subject.sub.some(s => s.id === prev)) catSel.value = prev;
+            } else {
+                catGroup.classList.add('hidden');
+            }
+            renderSessionSetupLessons();
+        }
+
+        function getSessionCategoryId() {
+            const key = document.getElementById('sessSubject').value;
+            const subject = subjects[key];
+            if (subject.hasSub) {
+                return document.getElementById('sessCategory').value;
+            }
+            return subject.sub[0].id;
+        }
+
+        function getSessionCategoryName() {
+            const key = document.getElementById('sessSubject').value;
+            const subject = subjects[key];
+            if (subject.hasSub) {
+                const id = document.getElementById('sessCategory').value;
+                return subject.sub.find(s => s.id === id)?.name || '';
+            }
+            return subject.sub[0].name;
+        }
+
+        function getIncompleteLessons(catId) {
+            return (lessonsCache[catId] || []).filter(l => !l.completed);
+        }
+
+        function renderSessionSetupLessons() {
+            const catId = getSessionCategoryId();
+            const lessons = getIncompleteLessons(catId);
+            const box = document.getElementById('sessLessonsPick');
+
+            const validIds = new Set(lessons.map(l => l.id));
+            [...sessionSelectedLessons].forEach(id => {
+                if (!validIds.has(id)) sessionSelectedLessons.delete(id);
+            });
+
+            if (lessons.length === 0) {
+                box.innerHTML = `
+                    <div class="empty-state" style="padding:1.5rem;">
+                        <i class="fas fa-trophy"></i>
+                        <p>🎉 لا توجد دروس غير مكتملة في هذا القسم!</p>
+                    </div>`;
+            } else {
+                box.innerHTML = lessons.map(l => {
+                    const d = DIFF_MAP[l.difficulty] || DIFF_MAP.easy;
+                    return `
+                    <label class="sess-lesson" style="margin-bottom:0;">
+                        <input type="checkbox" ${sessionSelectedLessons.has(l.id) ? 'checked' : ''}
+                               onchange="toggleSetupPick('${l.id}', this.checked)" />
+                        <div class="sl-name">${l.name}</div>
+                        <span class="difficulty-badge ${d.cls}">${d.label}</span>
+                    </label>`;
+                }).join('');
+            }
+            updatePickCount();
+        }
+
+        function toggleSetupPick(lessonId, checked) {
+            if (checked) sessionSelectedLessons.add(lessonId);
+            else sessionSelectedLessons.delete(lessonId);
+            updatePickCount();
+        }
+
+        function selectAllSetupLessons(all) {
+            const catId = getSessionCategoryId();
+            const lessons = getIncompleteLessons(catId);
+            sessionSelectedLessons.clear();
+            if (all) lessons.forEach(l => sessionSelectedLessons.add(l.id));
+            renderSessionSetupLessons();
+        }
+
+        function updatePickCount() {
+            document.getElementById('pickCount').textContent = sessionSelectedLessons.size + ' درس';
+        }
+
+        function setPreset(h, m) {
+            document.getElementById('sessHours').value = h;
+            document.getElementById('sessMinutes').value = m;
+        }
+
+        function showSessionSetupView() {
+            document.getElementById('sessionSetup').classList.remove('hidden');
+            document.getElementById('sessionActive').classList.add('hidden');
+            document.getElementById('overtimeAlert').classList.remove('show');
+        }
+
+        function showSessionActiveView() {
+            document.getElementById('sessionSetup').classList.add('hidden');
+            document.getElementById('sessionActive').classList.remove('hidden');
+        }
+
+        function formatTimer(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            const pad = n => n.toString().padStart(2, '0');
+            if (h > 0) return `${h}:${pad(m)}:${pad(s)}`;
+            return `${pad(m)}:${pad(s)}`;
+        }
+
+        function updateRing() {
+            const ring = document.getElementById('ringFill');
+            const ratio = sessionTotal > 0 ? sessionRemaining / sessionTotal : 0;
+            ring.style.strokeDashoffset = RING_LEN * (1 - ratio);
+        }
+
+        async function startSession() {
+            const subjectKey = document.getElementById('sessSubject').value;
+            const h = parseInt(document.getElementById('sessHours').value) || 0;
+            const m = parseInt(document.getElementById('sessMinutes').value) || 0;
+            const totalSec = h * 3600 + m * 60;
+
+            if (totalSec <= 0) {
+                showToast('يرجى تحديد مدة الدراسة!', 'error');
+                return;
+            }
+
+            if (sessionSelectedLessons.size === 0) {
+                showToast('📝 اختر درساً واحداً على الأقل للجلسة!', 'error');
+                return;
+            }
+
+            const catId = getSessionCategoryId();
+
+            sessionData = {
+                subjectKey,
+                subjectName: subjects[subjectKey].name,
+                categoryId: catId,
+                categoryName: getSessionCategoryName()
+            };
+            sessionTotal = totalSec;
+            sessionRemaining = totalSec;
+            sessionElapsed = 0;
+            sessionState = 'running';
+            checkedLessonIds.clear();
+
+            document.getElementById('sessActiveSubject').textContent = '📚 ' + sessionData.subjectName;
+            document.getElementById('sessActiveCat').textContent =
+                `📂 ${sessionData.categoryName} — ${sessionSelectedLessons.size} درس مختار`;
+            document.getElementById('sessionNotes').value = localStorage.getItem('session_notes_draft') || '';
+
+            renderSessionLessons();
+            showSessionActiveView();
+            updateTimerUI();
+            updateRing();
+
+            sessionInterval = setInterval(tickSession, 1000);
+            showToast('🚀 انطلقت الجلسة! ركّز وكن بطل.. بالتوفيق!', 'success');
+        }
+
+        function tickSession() {
+            if (sessionState === 'paused') return;
+            sessionElapsed++;
+
+            if (sessionState === 'running') {
+                sessionRemaining--;
+                if (sessionRemaining <= 0) {
+                    sessionRemaining = 0;
+                    sessionState = 'overtime';
+                    playFinishBeep();
+                    document.getElementById('overtimeAlert').classList.add('show');
+                    showToast('⏰ انتهى الوقت المحدد! يمكنك المتابعة أو الإنهاء', 'info');
+                }
+            }
+            updateTimerUI();
+            updateRing();
+        }
+
+        function updateTimerUI() {
+            document.getElementById('sessTimeDisplay').textContent = formatTimer(sessionRemaining);
+            document.getElementById('sessTimeLabel').textContent =
+                sessionState === 'overtime' ? 'انتهى الوقت!' : 'الوقت المتبقي';
+
+            const badge = document.getElementById('sessStateBadge');
+            const pauseBtn = document.getElementById('btnPauseToggle');
+
+            if (sessionState === 'running') {
+                badge.textContent = '▶️ جارية الآن';
+                badge.className = 'session-state-badge running';
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف مؤقت';
+                pauseBtn.className = 'btn-ctrl pause';
+                document.getElementById('timerRing').classList.remove('overtime');
+            } else if (sessionState === 'paused') {
+                badge.textContent = '⏸️ متوقفة مؤقتاً';
+                badge.className = 'session-state-badge paused';
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> استئناف';
+                pauseBtn.className = 'btn-ctrl resume';
+            } else if (sessionState === 'overtime') {
+                badge.textContent = '🔥 وقت إضافي!';
+                badge.className = 'session-state-badge overtime';
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف مؤقت';
+                pauseBtn.className = 'btn-ctrl pause';
+                document.getElementById('timerRing').classList.add('overtime');
+            }
+        }
+
+        function togglePause() {
+            if (sessionState === 'running' || sessionState === 'overtime') {
+                sessionState = 'paused';
+                showToast('⏸️ تم إيقاف الجلسة مؤقتاً', 'info');
+            } else if (sessionState === 'paused') {
+                sessionState = (sessionRemaining <= 0) ? 'overtime' : 'running';
+                showToast('▶️ استئناف الدراسة!', 'success');
+            }
+            updateTimerUI();
+        }
+
+        function renderSessionLessons() {
+            const all = lessonsCache[sessionData.categoryId] || [];
+            const lessons = all.filter(l => sessionSelectedLessons.has(l.id));
+            const list = document.getElementById('sessionLessonsList');
+
+            if (lessons.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>لا توجد دروس مختارة</p></div>';
+                return;
+            }
+
+            list.innerHTML = lessons.map(l => {
+                const d = DIFF_MAP[l.difficulty] || DIFF_MAP.easy;
+                const isDone = l.completed || checkedLessonIds.has(l.id);
+                return `
+                <div class="sess-lesson ${isDone ? 'is-done' : ''}">
+                    <input type="checkbox" ${isDone ? 'disabled checked' : ''}
+                           onchange="onSessionCheck('${l.id}', this.checked)" />
+                    <div class="sl-name">${l.name}</div>
+                    <span class="difficulty-badge ${d.cls}">${d.label}</span>
+                    ${l.completed
+                        ? '<span class="type-badge health"><i class="fas fa-check"></i> مكتمل</span>'
+                        : `<button class="btn-complete" onclick="instantComplete('${l.id}')">
+                             <i class="fas fa-check"></i> إنهاء الآن</button>`}
+                </div>`;
+            }).join('');
+        }
+
+        function onSessionCheck(id, checked) {
+            if (checked) checkedLessonIds.add(id);
+            else checkedLessonIds.delete(id);
+        }
+
+        async function instantComplete(lessonId) {
+            await updateLessonStores(lessonId, { completed: true });
+            sessionSelectedLessons.delete(lessonId);
+            checkedLessonIds.delete(lessonId);
+            renderSessionLessons();
+            celebrateProgress();
+            showToast('✅ درس مكتمل! أحسنت', 'success');
+        }
+
+        document.getElementById('sessionNotes').addEventListener('input', function() {
+            localStorage.setItem('session_notes_draft', this.value);
+        });
+
+        async function endSession() {
+            if (!confirm('هل تريد إنهاء الجلسة وحفظ التقدم؟\nسيتم تعليم الدروس المحددة كمكتملة ✔')) return;
+
+            clearInterval(sessionInterval);
+            sessionInterval = null;
+
+            const doneNames = [];
+            for (const id of checkedLessonIds) {
+                const lesson = (lessonsCache[sessionData.categoryId] || []).find(l => l.id === id);
+                if (lesson && !lesson.completed) {
+                    await updateLessonStores(id, { completed: true });
+                    doneNames.push(lesson.name);
+                }
+            }
+
+            const notes = document.getElementById('sessionNotes').value.trim();
+            const record = {
+                subjectName: sessionData.subjectName,
+                categoryName: sessionData.categoryName,
+                plannedSeconds: sessionTotal,
+                actualSeconds: sessionElapsed,
+                lessonsDone: doneNames,
+                notes: notes,
+                date: new Date().toISOString()
+            };
+            await addSessionToStores(record);
+
+            localStorage.removeItem('session_notes_draft');
+            document.getElementById('sessionNotes').value = '';
+            sessionState = 'idle';
+            sessionData = null;
+            checkedLessonIds.clear();
+            sessionSelectedLessons.clear();
+
+            showSessionSetupView();
+            renderSessionSetupLessons();
+            renderSessionHistory();
+            updateHomeStats();
+            celebrateProgress();
+
+            showToast(`🎉 بطل! درست ${formatDuration(sessionElapsed)} وأكملت ${doneNames.length} درس`, 'success');
+        }
+
+        function discardSession() {
+            if (!confirm('هل تريد إلغاء الجلسة بدون حفظ؟')) return;
+            clearInterval(sessionInterval);
+            sessionInterval = null;
+            sessionState = 'idle';
+            sessionData = null;
+            checkedLessonIds.clear();
+            sessionSelectedLessons.clear();
+            localStorage.removeItem('session_notes_draft');
+            document.getElementById('sessionNotes').value = '';
+            showSessionSetupView();
+            renderSessionSetupLessons();
+            showToast('تم إلغاء الجلسة', 'info');
+        }
+
+        function playFinishBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.3, 0.6].forEach(delay => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = 880;
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime + delay);
+                    osc.start(ctx.currentTime + delay);
+                    osc.stop(ctx.currentTime + delay + 0.2);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function renderSessionHistory() {
+            const list = document.getElementById('sessionsHistory');
+            const totalSec = allSessions.reduce((s, x) => s + (x.actualSeconds || 0), 0);
+            document.getElementById('historyTotalTime').textContent = formatDuration(totalSec);
+
+            if (allSessions.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-hourglass-start"></i>
+                        <p>لا توجد جلسات بعد. ابدأ أول جلسة دراسة لك! 🚀</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = allSessions.map(s => `
+                <div class="history-item">
+                    <div class="h-icon">📚</div>
+                    <div class="h-main">
+                        <div class="h-title">${s.subjectName} — ${s.categoryName}</div>
+                        <div class="h-meta">
+                            <span><i class="fas fa-stopwatch"></i> ${formatDuration(s.actualSeconds || 0)}</span>
+                            <span><i class="fas fa-check-circle"></i> ${(s.lessonsDone || []).length} دروس</span>
+                            <span><i class="fas fa-calendar"></i> ${formatDateAr(s.date)}</span>
+                        </div>
+                        ${s.notes ? `<div class="h-note">📝 ${s.notes}</div>` : ''}
+                    </div>
+                    <button class="btn-delete" onclick="removeSession('${s.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function removeSession(sessionId) {
+            if (!confirm('حذف هذه الجلسة من السجل؟')) return;
+            await deleteSessionStores(sessionId);
+            renderSessionHistory();
+            updateHomeStats();
+        }
+
         // ===== الجدول الأسبوعي =====
         let selectedDay = null;
 
@@ -1082,7 +2248,6 @@
                 .filter(a => a.day === selectedDay)
                 .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
-            // إحصائيات اليوم حسب النوع
             const counts = { study: 0, entertainment: 0, health: 0 };
             dayActs.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
             statsDiv.innerHTML = `
@@ -1164,7 +2329,6 @@
             renderActivities();
         }
 
-        // جدول مقترح لليوم المحدد
         async function addSuggestedDay() {
             const suggestions = [
                 { time: '05:00', type: 'health',        name: '🌅 الاستيقاظ ورياضة خفيفة' },
@@ -1238,6 +2402,10 @@
         }
 
         // ===== الإحصائيات =====
+        function getTotalStudySeconds() {
+            return allSessions.reduce((s, x) => s + (x.actualSeconds || 0), 0);
+        }
+
         function updateHomeStats() {
             let total = 0, completed = 0;
             for (const subjKey in subjects) {
@@ -1256,8 +2424,8 @@
             document.getElementById('totalLessons').textContent = total;
             document.getElementById('completedLessons').textContent = completed;
             document.getElementById('streakDays').textContent = localStorage.getItem('streak') || 0;
+            document.getElementById('homeStudyTime').textContent = formatDuration(getTotalStudySeconds());
 
-            // عدد أنشطة اليوم في بطاقة الجدول
             const todayId = getTodayId();
             const todayCount = allActivities.filter(a => a.day === todayId).length;
             document.getElementById('todayActivitiesCount').textContent =
@@ -1287,6 +2455,7 @@
             document.getElementById('statTotalLessons').textContent = total;
             document.getElementById('statCompleted').textContent = completed;
             document.getElementById('statPercentage').textContent = percent + '%';
+            document.getElementById('statStudyTime').textContent = formatDuration(getTotalStudySeconds());
             document.getElementById('statActivities').textContent = allActivities.length;
 
             document.getElementById('subjectProgress').innerHTML = stats.map(s => {
@@ -1304,7 +2473,6 @@
             }).join('');
         }
 
-        // النشاط القادم اليوم (فكرة إبداعية)
         function renderNextActivity() {
             const todayId = getTodayId();
             const now = new Date();
@@ -1358,13 +2526,20 @@
 
         // ===== التهيئة =====
         window.addEventListener('load', async () => {
+            const savedTheme = localStorage.getItem('site_theme');
+            const startupTheme = savedTheme && savedTheme !== 'cosmic' ? savedTheme : 'gold';
+
+            document.body.setAttribute('data-theme', startupTheme);
+            localStorage.setItem('site_theme', startupTheme);
+            renderThemeMenu();
+
             setDailyQuote();
             await checkFirebase();
             await loadAllLessons();
             await loadAllActivities();
+            await loadAllSessions();
             updateHomeStats();
             renderNextActivity();
-            // تعبئة قائمة الأيام في نموذج الإضافة
             document.getElementById('actDay').innerHTML =
                 DAYS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
             document.getElementById('actDay').value = getTodayId();
