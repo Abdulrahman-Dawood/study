@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرستي | نظام إدارة الدراسة الذكي</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --study: #4facfe;
+            --fun: #fa709a;
+            --health: #43e97b;
+            --bg-dark: #0F0F1A;
+            --bg-card: #1A1A2E;
+            --bg-card-hover: #16213E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0B0;
+            --border-color: #2A2A4A;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-animation { position: fixed; inset: 0; z-index: -1; opacity: 0.1; pointer-events: none; }
+        .bg-animation::before {
+            content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
+            background: var(--primary); filter: blur(100px); top: 10%; right: 10%;
+            animation: float1 10s ease-in-out infinite;
+        }
+        .bg-animation::after {
+            content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%;
+            background: var(--secondary); filter: blur(100px); bottom: 10%; left: 10%;
+            animation: float2 12s ease-in-out infinite;
+        }
+        @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,50px) scale(1.2)} }
+        @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(50px,-50px) scale(.8)} }
+
+        .navbar {
+            background: rgba(15,15,26,.9); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem;
+        }
+        .navbar .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 800; cursor: pointer; }
+        .navbar .logo i { color: var(--primary); font-size: 1.8rem; }
+        .nav-links { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+        .nav-btn {
+            background: none; border: none; color: var(--text-secondary); font-size: .95rem;
+            cursor: pointer; padding: 8px 16px; border-radius: 10px; transition: all .3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-btn:hover, .nav-btn.active { background: var(--primary); color: white; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        .page { display: none; animation: fadeIn .4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+
+        .page-header { text-align: center; margin-bottom: 2.5rem; }
+        .page-header h1 {
+            font-size: 2.3rem; font-weight: 900;
+            background: var(--gradient-1); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .4rem;
+        }
+        .page-header p { color: var(--text-secondary); font-size: 1.05rem; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+
+        .subject-card {
+            background: var(--bg-card); border-radius: 20px; padding: 2rem; text-align: center;
+            cursor: pointer; transition: all .3s cubic-bezier(.4,0,.2,1);
+            border: 1px solid var(--border-color); position: relative; overflow: hidden;
+        }
+        .subject-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
+        .subject-card.arabic::before { background: var(--gradient-1); }
+        .subject-card.english::before { background: var(--gradient-3); }
+        .subject-card.biology::before { background: var(--gradient-4); }
+        .subject-card.islamic::before { background: var(--gradient-5); }
+        .subject-card.activities::before { background: var(--gradient-2); }
+        .subject-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(108,99,255,.3); background: var(--bg-card-hover); }
+        .subject-card .icon { font-size: 3.2rem; margin-bottom: 1rem; display: inline-block; }
+        .subject-card.arabic .icon { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card.english .icon { background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card.biology .icon { background: var(--gradient-4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card.islamic .icon { background: var(--gradient-5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card.activities .icon { background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: .4rem; }
+        .subject-card p { color: var(--text-secondary); font-size: .88rem; }
+        .progress-mini { margin-top: 1rem; height: 6px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
+        .progress-mini .bar { height: 100%; border-radius: 10px; transition: width .5s ease; }
+
+        .sub-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .sub-card {
+            background: var(--bg-card); border-radius: 16px; padding: 1.5rem; text-align: center;
+            cursor: pointer; transition: all .3s; border: 1px solid var(--border-color);
+        }
+        .sub-card:hover { transform: scale(1.05); border-color: var(--primary); box-shadow: 0 10px 30px rgba(108,99,255,.2); }
+        .sub-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+
+        .lesson-section { background: var(--bg-card); border-radius: 20px; padding: 2rem; border: 1px solid var(--border-color); }
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .section-title h2 { font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+
+        .btn-add {
+            background: var(--gradient-1); color: white; border: none; padding: 12px 24px;
+            border-radius: 12px; cursor: pointer; font-size: .95rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; transition: all .3s;
+        }
+        .btn-add:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(108,99,255,.4); }
+
+        .add-lesson-form {
+            background: var(--bg-card-hover); border-radius: 16px; padding: 1.5rem;
+            margin-bottom: 1.5rem; display: none; animation: fadeIn .3s ease;
+        }
+        .add-lesson-form.show { display: block; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: .5rem; color: var(--text-secondary); font-size: .9rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px 16px; background: var(--bg-dark);
+            border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary);
+            font-size: 1rem; transition: border-color .3s;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+
+        .lessons-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .lessons-table th { text-align: right; padding: 12px 16px; color: var(--text-secondary); font-size: .88rem; }
+        .lessons-table td { background: var(--bg-card-hover); padding: 15px 16px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .lessons-table td:first-child { border-right: 1px solid var(--border-color); border-radius: 0 12px 12px 0; }
+        .lessons-table td:last-child { border-left: 1px solid var(--border-color); border-radius: 12px 0 0 12px; }
+        .lessons-table tr:hover td { background: rgba(108,99,255,.1); }
+
+        .difficulty-badge { padding: 4px 12px; border-radius: 20px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+        .difficulty-easy { background: rgba(76,175,80,.2); color: #4CAF50; }
+        .difficulty-medium { background: rgba(255,152,0,.2); color: #FF9800; }
+        .difficulty-hard { background: rgba(244,67,54,.2); color: #F44336; }
+
+        .btn-complete {
+            background: var(--border-color); color: var(--text-secondary); border: none;
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all .3s;
+            display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; white-space: nowrap;
+        }
+        .btn-complete.completed { background: var(--success); color: white; }
+        .btn-complete:hover { transform: scale(1.05); }
+
+        .btn-delete { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; transition: all .3s; padding: 5px; }
+        .btn-delete:hover { transform: scale(1.2); }
+
+        .progress-container { margin-bottom: 1.5rem; }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: .5rem; }
+        .progress-bar { height: 12px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
+        .progress-bar .fill { height: 100%; background: var(--gradient-4); border-radius: 10px; transition: width .5s ease; }
+
+        /* ===== صفحة الجدول الأسبوعي ===== */
+        .day-tabs-wrap { overflow-x: auto; padding-bottom: 8px; margin-bottom: 1.5rem; }
+        .day-tabs { display: grid; grid-template-columns: repeat(7, minmax(100px, 1fr)); gap: 8px; min-width: 730px; }
+        .day-tab {
+            background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 14px;
+            padding: 12px 6px; text-align: center; cursor: pointer; transition: all .3s; position: relative;
+        }
+        .day-tab:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .day-tab.active { background: var(--gradient-1); border-color: transparent; box-shadow: 0 8px 20px rgba(108,99,255,.4); }
+        .day-tab.today:not(.active) { border-color: var(--warning); }
+        .day-tab.today:not(.active)::after {
+            content: 'اليوم'; position: absolute; top: -9px; right: 50%; transform: translateX(50%);
+            background: var(--warning); color: #000; font-size: .6rem; font-weight: 700;
+            padding: 1px 8px; border-radius: 10px;
+        }
+        .day-tab .d-name { font-weight: 700; font-size: .95rem; }
+        .day-tab .d-date { font-size: .72rem; color: var(--text-secondary); margin-top: 2px; }
+        .day-tab.active .d-date { color: rgba(255,255,255,.8); }
+        .day-tab .d-count {
+            margin-top: 7px; font-size: .68rem; background: rgba(255,255,255,.12);
+            border-radius: 10px; padding: 2px 10px; display: inline-block; color: var(--text-secondary);
+        }
+        .day-tab.active .d-count { background: rgba(255,255,255,.25); color: #fff; }
+
+        .day-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+        }
+        .day-header h3 { font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .day-type-stats { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+        .type-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .type-badge.study { background: rgba(79,172,254,.18); color: var(--study); }
+        .type-badge.entertainment { background: rgba(250,112,154,.18); color: var(--fun); }
+        .type-badge.health { background: rgba(67,233,123,.18); color: var(--health); }
+
+        .add-activity-form { display: grid; grid-template-columns: 1.2fr 1fr 1.4fr 2.5fr auto; gap: .8rem; align-items: end; }
+        .add-activity-form .form-group { margin: 0; }
+
+        .activity-item {
+            position: relative; background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 1rem 1.4rem; display: flex; align-items: center;
+            gap: 1.2rem; margin-bottom: .8rem; transition: all .3s; overflow: hidden;
+            animation: fadeIn .3s ease;
+        }
+        .activity-item::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 5px; background: var(--type-color); }
+        .activity-item.study { --type-color: var(--study); }
+        .activity-item.entertainment { --type-color: var(--fun); }
+        .activity-item.health { --type-color: var(--health); }
+        .activity-item:hover { transform: translateX(-5px); box-shadow: 0 8px 25px rgba(0,0,0,.3); }
+        .activity-item.completed { opacity: .5; }
+        .activity-item.completed .act-name { text-decoration: line-through; }
+
+        .act-time {
+            background: var(--bg-dark); padding: 8px 14px; border-radius: 10px;
+            text-align: center; min-width: 90px; font-weight: 700; color: var(--type-color);
+            direction: ltr; font-size: .95rem;
+        }
+        .act-main { flex: 1; }
+        .act-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
+        .act-actions { display: flex; gap: .5rem; align-items: center; }
+
+        /* ===== مؤقت التركيز (بومودورو) ===== */
+        .pomodoro {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;
+        }
+        .pomo-time {
+            font-size: 3.2rem; font-weight: 900; direction: ltr;
+            background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: .8rem; font-variant-numeric: tabular-nums;
+        }
+        .pomo-btns { display: flex; gap: .6rem; justify-content: center; margin-bottom: .6rem; }
+        .pomo-btn {
+            width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
+            font-size: 1.1rem; color: white; transition: all .3s;
+        }
+        .pomo-btn.start { background: var(--gradient-4); }
+        .pomo-btn.pause { background: var(--gradient-5); }
+        .pomo-btn.reset { background: var(--bg-card-hover); border: 1px solid var(--border-color); }
+        .pomo-btn:hover { transform: scale(1.1); }
+        .pomo-label { color: var(--text-secondary); font-size: .85rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .stat-card { background: var(--bg-card); border-radius: 16px; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); }
+        .stat-card i { font-size: 1.9rem; margin-bottom: .5rem; }
+        .stat-card .number { font-size: 2rem; font-weight: 800; margin: .4rem 0; }
+        .stat-card .label { color: var(--text-secondary); font-size: .88rem; }
+
+        .quote-box {
+            background: var(--gradient-1); border-radius: 20px; padding: 1.8rem; text-align: center;
+            margin-bottom: 2rem; position: relative; overflow: hidden;
+        }
+        .quote-box::before { content: '"'; position: absolute; top: -20px; right: 20px; font-size: 8rem; opacity: .1; font-family: 'Amiri', serif; }
+        .quote-box .quote { font-size: 1.25rem; font-weight: 600; font-family: 'Amiri', serif; }
+
+        .next-activity {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 1.2rem 1.5rem; margin-bottom: 2rem; display: none;
+            align-items: center; gap: 1rem; border-right: 5px solid var(--warning);
+        }
+        .next-activity.show { display: flex; }
+        .next-activity i { font-size: 1.8rem; color: var(--warning); }
+        .next-activity .na-label { color: var(--text-secondary); font-size: .8rem; }
+        .next-activity .na-name { font-weight: 700; font-size: 1.05rem; }
+
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120px);
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 1rem 2rem; display: flex; align-items: center; gap: 10px;
+            z-index: 10000; transition: transform .35s ease; box-shadow: 0 10px 30px rgba(0,0,0,.5);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+
+        .btn-back {
+            background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary);
+            padding: 10px 20px; border-radius: 12px; cursor: pointer; display: flex;
+            align-items: center; gap: 8px; margin-bottom: 1.5rem; transition: all .3s;
+        }
+        .btn-back:hover { background: var(--primary); border-color: var(--primary); }
+
+        .firebase-status {
+            position: fixed; bottom: 20px; right: 20px; padding: 8px 16px; border-radius: 20px;
+            font-size: .78rem; display: flex; align-items: center; gap: 8px; z-index: 999;
+        }
+        .firebase-status.connected { background: rgba(76,175,80,.2); color: var(--success); }
+        .firebase-status.disconnected { background: rgba(244,67,54,.2); color: var(--danger); }
+
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .3; }
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .navbar { padding: 1rem; }
+            .page-header h1 { font-size: 1.7rem; }
+            .add-activity-form { grid-template-columns: 1fr 1fr; }
+            .add-activity-form .form-group:nth-child(3), .add-activity-form .form-group:nth-child(4) { grid-column: span 2; }
+            .add-activity-form .btn-add { grid-column: span 2; justify-content: center; }
+            .activity-item { flex-wrap: wrap; }
+            .act-main { width: 100%; order: 3; }
+            .lessons-table { font-size: .8rem; }
+            .lessons-table td { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav class="navbar">
+        <div class="logo" onclick="showPage('home')">
+            <i class="fas fa-graduation-cap"></i>
+            <span>مدرستي</span>
+        </div>
+        <div class="nav-links">
+            <button class="nav-btn active" data-page="home" onclick="showPage('home')">
+                <i class="fas fa-home"></i> الرئيسية
+            </button>
+            <button class="nav-btn" data-page="schedule" onclick="showPage('schedule')">
+                <i class="fas fa-calendar-week"></i> جدول الأسبوع
+            </button>
+            <button class="nav-btn" data-page="stats" onclick="showPage('stats')">
+                <i class="fas fa-chart-line"></i> الإحصائيات
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- ===== الرئيسية ===== -->
+        <div class="page active" id="page-home">
+            <div class="page-header">
+                <h1>مرحباً بك في مدرستي 📚</h1>
+                <p>نظّم وقتك، تابع دروسك، حقق أهدافك</p>
+            </div>
+
+            <div class="quote-box">
+                <div class="quote" id="dailyQuote"></div>
+                <div style="opacity:.8; font-size:.85rem; margin-top:.4rem;">✨ حكمة اليوم</div>
+            </div>
+
+            <div class="next-activity" id="nextActivity">
+                <i class="fas fa-hourglass-half"></i>
+                <div>
+                    <div class="na-label">⏰ النشاط القادم اليوم</div>
+                    <div class="na-name" id="nextActivityName"></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-book" style="color:var(--primary);"></i>
+                    <div class="number" id="totalLessons">0</div>
+                    <div class="label">إجمالي الدروس</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle" style="color:var(--success);"></i>
+                    <div class="number" id="completedLessons">0</div>
+                    <div class="label">دروس مكتملة</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-fire" style="color:var(--warning);"></i>
+                    <div class="number" id="streakDays">0</div>
+                    <div class="label">أيام متتالية</div>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="subject-card arabic" onclick="openSubject('arabic')">
+                    <i class="fas fa-language icon"></i>
+                    <h3>اللغة العربية</h3>
+                    <p>المنهاج والقواعد</p>
+                    <div class="progress-mini"><div class="bar" id="progress-arabic" style="background:var(--gradient-1); width:0%"></div></div>
+                </div>
+                <div class="subject-card english" onclick="openSubject('english')">
+                    <i class="fas fa-globe icon"></i>
+                    <h3>اللغة الإنجليزية</h3>
+                    <p>المنهاج والقواعد</p>
+                    <div class="progress-mini"><div class="bar" id="progress-english" style="background:var(--gradient-3); width:0%"></div></div>
+                </div>
+                <div class="subject-card biology" onclick="openSubject('biology')">
+                    <i class="fas fa-dna icon"></i>
+                    <h3>علم الأحياء</h3>
+                    <p>استكشف عالم الأحياء</p>
+                    <div class="progress-mini"><div class="bar" id="progress-biology" style="background:var(--gradient-4); width:0%"></div></div>
+                </div>
+                <div class="subject-card islamic" onclick="openSubject('islamic')">
+                    <i class="fas fa-mosque icon"></i>
+                    <h3>التربية الإسلامية</h3>
+                    <p>علوم شرعية وقيم</p>
+                    <div class="progress-mini"><div class="bar" id="progress-islamic" style="background:var(--gradient-5); width:0%"></div></div>
+                </div>
+                <div class="subject-card activities" onclick="showPage('schedule')">
+                    <i class="fas fa-calendar-week icon"></i>
+                    <h3>جدول الأسبوع</h3>
+                    <p id="todayActivitiesCount">نظّم أنشطتك اليومية</p>
+                    <div class="progress-mini"><div class="bar" style="background:var(--gradient-2); width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== المادة ===== -->
+        <div class="page" id="page-subject">
+            <button class="btn-back" onclick="showPage('home')">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </button>
+            <div class="page-header">
+                <h1 id="subjectTitle"></h1>
+                <p id="subjectDesc"></p>
+            </div>
+            <div class="sub-cards-grid" id="subCards"></div>
+        </div>
+
+        <!-- ===== الدروس ===== -->
+        <div class="page" id="page-lessons">
+            <button class="btn-back" onclick="goBackFromLessons()">
+                <i class="fas fa-arrow-right"></i> رجوع
+            </button>
+            <div class="page-header"><h1 id="lessonsTitle"></h1></div>
+
+            <div class="lesson-section">
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span>التقدم الإجمالي</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar"><div class="fill" id="lessonsProgress" style="width:0%"></div></div>
+                </div>
+
+                <div class="section-title">
+                    <h2><i class="fas fa-list-ul"></i> الدروس</h2>
+                    <button class="btn-add" onclick="toggleAddForm()">
+                        <i class="fas fa-plus"></i> إضافة درس جديد
+                    </button>
+                </div>
+
+                <div class="add-lesson-form" id="addLessonForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> اسم الدرس</label>
+                        <input type="text" id="lessonName" placeholder="مثال: المضاف إليه" />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-signal"></i> مستوى الصعوبة</label>
+                        <select id="lessonDifficulty">
+                            <option value="easy">🟢 سهل</option>
+                            <option value="medium">🟡 متوسط</option>
+                            <option value="hard">🔴 صعب</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-sticky-note"></i> ملاحظات (اختياري)</label>
+                        <input type="text" id="lessonNotes" placeholder="أي ملاحظات عن الدرس..." />
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-back" style="margin:0;" onclick="toggleAddForm()">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                        <button class="btn-add" onclick="saveLesson()">
+                            <i class="fas fa-save"></i> حفظ الدرس
+                        </button>
+                    </div>
+                </div>
+
+                <table class="lessons-table" id="lessonsTable">
+                    <thead>
+                        <tr>
+                            <th>اسم الدرس</th>
+                            <th>الصعوبة</th>
+                            <th>الحالة</th>
+                            <th>ملاحظات</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lessonsBody"></tbody>
+                </table>
+
+                <div class="empty-state hidden" id="emptyLessons">
+                    <i class="fas fa-book-open"></i>
+                    <p>لا توجد دروس بعد. ابدأ بإضافة درسك الأول!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== الجدول الأسبوعي ===== -->
+        <div class="page" id="page-schedule">
+            <div class="page-header">
+                <h1>🗓️ منظم الوقت الأسبوعي</h1>
+                <p>7 أيام في الأسبوع - نظّم أنشطتك الدراسية والترفيهية والصحية</p>
+            </div>
+
+            <!-- تبويبات الأيام -->
+            <div class="day-tabs-wrap">
+                <div class="day-tabs" id="dayTabs"></div>
+            </div>
+
+            <!-- رأس اليوم المحدد -->
+            <div class="day-header">
+                <h3 id="selectedDayName"></h3>
+                <div class="day-type-stats" id="dayTypeStats"></div>
+            </div>
+
+            <!-- نموذج إضافة نشاط -->
+            <div class="lesson-section" style="margin-bottom: 1.5rem;">
+                <div class="section-title">
+                    <h2><i class="fas fa-plus-circle"></i> إضافة نشاط جديد</h2>
+                    <button class="btn-back" style="margin:0;" onclick="addSuggestedDay()">
+                        <i class="fas fa-magic"></i> جدول مقترح لهذا اليوم
+                    </button>
+                </div>
+                <div class="add-activity-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-day"></i> اليوم</label>
+                        <select id="actDay"></select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> الوقت</label>
+                        <input type="time" id="actTime" />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tags"></i> نوع النشاط</label>
+                        <select id="actType">
+                            <option value="study">📚 دراسي</option>
+                            <option value="entertainment">🎮 ترفيهي</option>
+                            <option value="health">💪 صحي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-pen"></i> اسم النشاط</label>
+                        <input type="text" id="actName" placeholder="مثال: مذاكرة اللغة العربية" />
+                    </div>
+                    <button class="btn-add" onclick="addActivity()">
+                        <i class="fas fa-plus"></i> إضافة
+                    </button>
+                </div>
+            </div>
+
+            <!-- قائمة الأنشطة -->
+            <div class="lesson-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-tasks"></i> أنشطة اليوم</h2>
+                </div>
+                <div id="activitiesList"></div>
+            </div>
+
+            <!-- مؤقت التركيز -->
+            <div class="pomodoro">
+                <div class="pomo-time" id="pomoDisplay">25:00</div>
+                <div class="pomo-btns">
+                    <button class="pomo-btn start" onclick="startPomo()"><i class="fas fa-play"></i></button>
+                    <button class="pomo-btn pause" onclick="pausePomo()"><i class="fas fa-pause"></i></button>
+                    <button class="pomo-btn reset" onclick="resetPomo()"><i class="fas fa-rotate-right"></i></button>
+                </div>
+                <div class="pomo-label" id="pomoLabel">🍅 تقنية بومودورو: 25 دقيقة تركيز ثم 5 دقائق راحة</div>
+            </div>
+        </div>
+
+        <!-- ===== الإحصائيات ===== -->
+        <div class="page" id="page-stats">
+            <div class="page-header">
+                <h1>📊 الإحصائيات والتقدم</h1>
+                <p>تابع أداءك وتقدمك في جميع المواد</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-books" style="color:var(--primary);"></i>
+                    <div class="number" id="statTotalLessons">0</div>
+                    <div class="label">إجمالي الدروس</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-double" style="color:var(--success);"></i>
+                    <div class="number" id="statCompleted">0</div>
+                    <div class="label">دروس مكتملة</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-percentage" style="color:var(--warning);"></i>
+                    <div class="number" id="statPercentage">0%</div>
+                    <div class="label">نسبة الإنجاز</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-week" style="color:var(--secondary);"></i>
+                    <div class="number" id="statActivities">0</div>
+                    <div class="label">أنشطة الأسبوع</div>
+                </div>
+            </div>
+
+            <div class="lesson-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-chart-bar"></i> التقدم حسب المادة</h2>
+                </div>
+                <div id="subjectProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="firebase-status disconnected" id="fbStatus">
+        <i class="fas fa-circle" style="font-size:8px;"></i>
+        <span id="fbStatusText">جاري الاتصال...</span>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <script>
+        // ===== إعداد Firebase =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6C6XgbLOYcWP1hmLlvWtHcBEWCmg1zj8",
+            authDomain: "study-4b13d.firebaseapp.com",
+            projectId: "study-4b13d",
+            storageBucket: "study-4b13d.firebasestorage.app",
+            messagingSenderId: "345794857868",
+            appId: "1:345794857868:web:f756e3ca3d4380cbaf24a9",
+            measurementId: "G-JEL8Y80JE9"
+        };
+
+        let db = null;
+        let firebaseReady = false;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch (e) { console.error(e); }
+
+        // فحص حقيقي للاتصال (قراءة فعلية وليس مجرد تهيئة)
+        async function checkFirebase() {
+            try {
+                await db.collection('lessons').limit(1).get();
+                firebaseReady = true;
+            } catch (e) {
+                console.error('Firebase not ready:', e.message);
+                firebaseReady = false;
+            }
+            updateFirebaseStatus(firebaseReady);
+        }
+
+        function updateFirebaseStatus(connected) {
+            const status = document.getElementById('fbStatus');
+            const text = document.getElementById('fbStatusText');
+            status.classList.toggle('connected', connected);
+            status.classList.toggle('disconnected', !connected);
+            text.textContent = connected ? 'Firebase متصل ✓' : 'تخزين محلي (تحقق من Firestore)';
+        }
+
+        // ===== أدوات مساعدة =====
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+        }
+
+        function getFromLocal(key) {
+            try {
+                const data = JSON.parse(localStorage.getItem(key) || '[]');
+                return Array.isArray(data) ? data : [];
+            } catch { return []; }
+        }
+
+        function saveToLocal(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ===== تعريف المواد =====
+        const subjects = {
+            arabic: {
+                name: 'اللغة العربية', hasSub: true,
+                sub: [
+                    { id: 'arabic_curriculum', name: 'المنهاج', icon: 'fa-book-open', desc: 'دروس المنهاج الدراسي' },
+                    { id: 'arabic_grammar', name: 'القواعد', icon: 'fa-spell-check', desc: 'قواعد اللغة العربية' }
+                ]
+            },
+            english: {
+                name: 'اللغة الإنجليزية', hasSub: true,
+                sub: [
+                    { id: 'english_curriculum', name: 'المنهاج', icon: 'fa-book-open', desc: 'دروس المنهاج الدراسي' },
+                    { id: 'english_grammar', name: 'القواعد', icon: 'fa-spell-check', desc: 'قواعد اللغة الإنجليزية' }
+                ]
+            },
+            biology: {
+                name: 'علم الأحياء', hasSub: false,
+                sub: [{ id: 'biology_main', name: 'الدروس', icon: 'fa-microscope', desc: 'جميع دروس الأحياء' }]
+            },
+            islamic: {
+                name: 'التربية الإسلامية', hasSub: false,
+                sub: [{ id: 'islamic_main', name: 'الدروس', icon: 'fa-book-quran', desc: 'جميع الدروس الشرعية' }]
+            }
+        };
+
+        // ===== أيام الأسبوع =====
+        const DAYS = [
+            { id: 'saturday',  name: 'السبت',   jsDay: 6 },
+            { id: 'sunday',    name: 'الأحد',   jsDay: 0 },
+            { id: 'monday',    name: 'الاثنين', jsDay: 1 },
+            { id: 'tuesday',   name: 'الثلاثاء', jsDay: 2 },
+            { id: 'wednesday', name: 'الأربعاء', jsDay: 3 },
+            { id: 'thursday',  name: 'الخميس',  jsDay: 4 },
+            { id: 'friday',    name: 'الجمعة',  jsDay: 5 }
+        ];
+
+        const ACTIVITY_TYPES = {
+            study:         { name: 'دراسي',   icon: 'fa-book' },
+            entertainment: { name: 'ترفيهي', icon: 'fa-gamepad' },
+            health:        { name: 'صحي',     icon: 'fa-heartbeat' }
+        };
+
+        function getTodayId() {
+            const today = new Date().getDay();
+            const day = DAYS.find(d => d.jsDay === today);
+            return day ? day.id : 'saturday';
+        }
+
+        function getWeekDates() {
+            const now = new Date();
+            const diff = (now.getDay() - 6 + 7) % 7;
+            const saturday = new Date(now);
+            saturday.setDate(now.getDate() - diff);
+            return DAYS.map((d, i) => {
+                const date = new Date(saturday);
+                date.setDate(saturday.getDate() + i);
+                return date;
+            });
+        }
+
+        function formatTime12(time24) {
+            if (!time24) return '';
+            const [h, m] = time24.split(':').map(Number);
+            const period = h < 12 ? 'ص' : 'م';
+            const h12 = h % 12 === 0 ? 12 : h % 12;
+            return `${h12}:${m.toString().padStart(2, '0')} ${period}`;
+        }
+
+        // ===== تخزين البيانات (مزدوج: Firebase + محلي) =====
+        let lessonsCache = {};   // { categoryId: [lessons] }
+        let allActivities = [];  // كل أنشطة الأسبوع
+
+        async function loadAllLessons() {
+            if (firebaseReady) {
+                try {
+                    // بدون orderBy لتجنب مشكلة الفهرس المركب - الترتيب يتم محلياً
+                    const snapshot = await db.collection('lessons').get();
+                    const all = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    lessonsCache = {};
+                    all.forEach(l => {
+                        if (!l.category) return;
+                        if (!lessonsCache[l.category]) lessonsCache[l.category] = [];
+                        lessonsCache[l.category].push(l);
+                    });
+                    Object.keys(lessonsCache).forEach(cat => {
+                        lessonsCache[cat].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+                        saveToLocal(`lessons_${cat}`, lessonsCache[cat]);
+                    });
+                    // ملء الفئات الفارغة
+                    Object.values(subjects).forEach(s => s.sub.forEach(sub => {
+                        if (!lessonsCache[sub.id]) lessonsCache[sub.id] = [];
+                    }));
+                    return;
+                } catch (e) {
+                    console.error('Firebase load failed:', e);
+                }
+            }
+            // نسخة احتياطية من الذاكرة المحلية
+            lessonsCache = {};
+            Object.values(subjects).forEach(s => s.sub.forEach(sub => {
+                lessonsCache[sub.id] = getFromLocal(`lessons_${sub.id}`);
+            }));
+        }
+
+        async function loadAllActivities() {
+            if (firebaseReady) {
+                try {
+                    const snapshot = await db.collection('activities').get();
+                    allActivities = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    saveToLocal('activities_all', allActivities);
+                    return;
+                } catch (e) {
+                    console.error('Firebase load activities failed:', e);
+                }
+            }
+            allActivities = getFromLocal('activities_all');
+        }
+
+        // حفظ الدرس في المخزنين معاً
+        async function addLessonToStores(lesson) {
+            lesson.id = generateId();
+            // محلي فوراً
+            if (!lessonsCache[lesson.category]) lessonsCache[lesson.category] = [];
+            lessonsCache[lesson.category].push(lesson);
+            saveToLocal(`lessons_${lesson.category}`, lessonsCache[lesson.category]);
+            // Firebase
+            if (firebaseReady) {
+                try {
+                    await db.collection('lessons').doc(lesson.id).set(lesson);
+                } catch (e) {
+                    console.error(e);
+                    showToast('تم الحفظ محلياً فقط (Firebase غير متاح)', 'error');
+                }
+            }
+            return lesson.id;
+        }
+
+        async function updateLessonStores(lessonId, data) {
+            let lesson = null;
+            for (const cat in lessonsCache) {
+                const found = lessonsCache[cat].find(l => l.id === lessonId);
+                if (found) { lesson = found; break; }
+            }
+            if (!lesson) return;
+            Object.assign(lesson, data);
+            saveToLocal(`lessons_${lesson.category}`, lessonsCache[lesson.category]);
+            if (firebaseReady) {
+                try {
+                    await db.collection('lessons').doc(lessonId).set(lesson, { merge: true });
+                } catch (e) { console.error(e); }
+            }
+        }
+
+        async function deleteLessonStores(lessonId) {
+            let lesson = null, catKey = null;
+            for (const cat in lessonsCache) {
+                const found = lessonsCache[cat].find(l => l.id === lessonId);
+                if (found) { lesson = found; catKey = cat; break; }
+            }
+            if (!lesson) return;
+            lessonsCache[catKey] = lessonsCache[catKey].filter(l => l.id !== lessonId);
+            saveToLocal(`lessons_${catKey}`, lessonsCache[catKey]);
+            if (firebaseReady) {
+                try { await db.collection('lessons').doc(lessonId).delete(); } catch (e) { console.error(e); }
+            }
+        }
+
+        // أنشطة الأسبوع
+        async function addActivityToStores(activity) {
+            activity.id = generateId();
+            allActivities.push(activity);
+            saveToLocal('activities_all', allActivities);
+            if (firebaseReady) {
+                try {
+                    await db.collection('activities').doc(activity.id).set(activity);
+                } catch (e) {
+                    console.error(e);
+                    showToast('تم الحفظ محلياً فقط (Firebase غير متاح)', 'error');
+                }
+            }
+            return activity.id;
+        }
+
+        async function updateActivityStores(activityId, data) {
+            const act = allActivities.find(a => a.id === activityId);
+            if (!act) return;
+            Object.assign(act, data);
+            saveToLocal('activities_all', allActivities);
+            if (firebaseReady) {
+                try {
+                    await db.collection('activities').doc(activityId).set(act, { merge: true });
+                } catch (e) { console.error(e); }
+            }
+        }
+
+        async function deleteActivityStores(activityId) {
+            allActivities = allActivities.filter(a => a.id !== activityId);
+            saveToLocal('activities_all', allActivities);
+            if (firebaseReady) {
+                try { await db.collection('activities').doc(activityId).delete(); } catch (e) { console.error(e); }
+            }
+        }
+
+        // ===== التنقل =====
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === pageId);
+            });
+
+            if (pageId === 'schedule') initSchedule();
+            if (pageId === 'stats') renderStats();
+            if (pageId === 'home') { updateHomeStats(); renderNextActivity(); }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        let currentSubject = null;
+
+        function openSubject(subjectId) {
+            currentSubject = subjectId;
+            const subject = subjects[subjectId];
+            document.getElementById('subjectTitle').textContent = subject.name;
+            document.getElementById('subjectDesc').textContent = `اختر ما تريد الدراسته من ${subject.name}`;
+            document.getElementById('subCards').innerHTML = subject.sub.map(s => `
+                <div class="sub-card" onclick="openLessons('${s.id}', '${s.name}')">
+                    <i class="fas ${s.icon}"></i>
+                    <h3>${s.name}</h3>
+                    <p style="color:var(--text-secondary); font-size:.85rem; margin-top:.5rem;">${s.desc}</p>
+                </div>
+            `).join('');
+            showPage('subject');
+        }
+
+        let currentCategory = null;
+
+        function openLessons(categoryId, categoryName) {
+            currentCategory = categoryId;
+            document.getElementById('lessonsTitle').textContent = categoryName;
+            renderLessons();
+            showPage('lessons');
+        }
+
+        function goBackFromLessons() {
+            if (currentSubject && subjects[currentSubject]?.hasSub) {
+                showPage('subject');
+            } else {
+                showPage('home');
+            }
+        }
+
+        // ===== إدارة الدروس =====
+        function toggleAddForm() {
+            document.getElementById('addLessonForm').classList.toggle('show');
+        }
+
+        function renderLessons() {
+            const lessons = lessonsCache[currentCategory] || [];
+            const tbody = document.getElementById('lessonsBody');
+            const emptyState = document.getElementById('emptyLessons');
+            const table = document.getElementById('lessonsTable');
+
+            if (lessons.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                table.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                table.classList.remove('hidden');
+                tbody.innerHTML = lessons.map(lesson => {
+                    const diffMap = {
+                        easy: { label: '🟢 سهل', cls: 'difficulty-easy' },
+                        medium: { label: '🟡 متوسط', cls: 'difficulty-medium' },
+                        hard: { label: '🔴 صعب', cls: 'difficulty-hard' }
+                    };
+                    const d = diffMap[lesson.difficulty] || diffMap.easy;
+                    return `
+                    <tr>
+                        <td style="font-weight:600;">${lesson.name}</td>
+                        <td><span class="difficulty-badge ${d.cls}">${d.label}</span></td>
+                        <td>
+                            <button class="btn-complete ${lesson.completed ? 'completed' : ''}"
+                                    onclick="toggleComplete('${lesson.id}')">
+                                <i class="fas ${lesson.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+                                ${lesson.completed ? 'مكتمل ✓' : 'غير مكتمل'}
+                            </button>
+                        </td>
+                        <td style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteLesson('${lesson.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            }
+            updateProgressBar(lessons);
+        }
+
+        async function saveLesson() {
+            const name = document.getElementById('lessonName').value.trim();
+            const difficulty = document.getElementById('lessonDifficulty').value;
+            const notes = document.getElementById('lessonNotes').value.trim();
+
+            if (!name) { showToast('يرجى إدخال اسم الدرس', 'error'); return; }
+
+            await addLessonToStores({
+                category: currentCategory,
+                name, difficulty, notes,
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+
+            renderLessons();
+            toggleAddForm();
+            document.getElementById('lessonName').value = '';
+            document.getElementById('lessonNotes').value = '';
+            showToast('تم إضافة الدرس بنجاح! 🎉', 'success');
+        }
+
+        async function toggleComplete(lessonId) {
+            const lesson = (lessonsCache[currentCategory] || []).find(l => l.id === lessonId);
+            if (!lesson) return;
+            const newState = !lesson.completed;
+            await updateLessonStores(lessonId, { completed: newState });
+            renderLessons();
+            if (newState) {
+                showToast('أحسنت! درس مكتمل ✅', 'success');
+                celebrateProgress();
+            }
+        }
+
+        async function deleteLesson(lessonId) {
+            if (!confirm('هل أنت متأكد من حذف هذا الدرس؟')) return;
+            await deleteLessonStores(lessonId);
+            renderLessons();
+            showToast('تم حذف الدرس', 'success');
+        }
+
+        function updateProgressBar(lessons) {
+            let percent = 0;
+            if (lessons.length > 0) {
+                percent = Math.round((lessons.filter(l => l.completed).length / lessons.length) * 100);
+            }
+            document.getElementById('lessonsProgress').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+        }
+
+        // ===== الجدول الأسبوعي =====
+        let selectedDay = null;
+
+        function initSchedule() {
+            selectedDay = selectedDay || getTodayId();
+            renderDayTabs();
+            renderActivities();
+        }
+
+        function renderDayTabs() {
+            const dates = getWeekDates();
+            const todayId = getTodayId();
+            const tabs = document.getElementById('dayTabs');
+            tabs.innerHTML = DAYS.map((day, i) => {
+                const count = allActivities.filter(a => a.day === day.id).length;
+                return `
+                <div class="day-tab ${day.id === selectedDay ? 'active' : ''} ${day.id === todayId ? 'today' : ''}"
+                     onclick="selectDay('${day.id}')">
+                    <div class="d-name">${day.name}</div>
+                    <div class="d-date">${dates[i].getDate()}/${dates[i].getMonth() + 1}</div>
+                    <div class="d-count"><i class="fas fa-list"></i> ${count} نشاط</div>
+                </div>`;
+            }).join('');
+        }
+
+        function selectDay(dayId) {
+            selectedDay = dayId;
+            document.getElementById('actDay').value = dayId;
+            renderDayTabs();
+            renderActivities();
+        }
+
+        function renderActivities() {
+            const day = DAYS.find(d => d.id === selectedDay);
+            const list = document.getElementById('activitiesList');
+            const statsDiv = document.getElementById('dayTypeStats');
+
+            document.getElementById('selectedDayName').innerHTML =
+                `<i class="fas fa-calendar-day"></i> أنشطة يوم ${day.name}`;
+
+            const dayActs = allActivities
+                .filter(a => a.day === selectedDay)
+                .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+            // إحصائيات اليوم حسب النوع
+            const counts = { study: 0, entertainment: 0, health: 0 };
+            dayActs.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
+            statsDiv.innerHTML = `
+                <span class="type-badge study"><i class="fas fa-book"></i> دراسي: ${counts.study}</span>
+                <span class="type-badge entertainment"><i class="fas fa-gamepad"></i> ترفيهي: ${counts.entertainment}</span>
+                <span class="type-badge health"><i class="fas fa-heartbeat"></i> صحي: ${counts.health}</span>
+            `;
+
+            if (dayActs.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>لا توجد أنشطة في هذا اليوم. أضف نشاطاً أو اضغط "جدول مقترح"!</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = dayActs.map(act => {
+                const t = ACTIVITY_TYPES[act.type] || ACTIVITY_TYPES.study;
+                return `
+                <div class="activity-item ${act.type} ${act.completed ? 'completed' : ''}">
+                    <div class="act-time"><i class="far fa-clock"></i> ${formatTime12(act.time)}</div>
+                    <div class="act-main">
+                        <div class="act-name">${act.name}</div>
+                        <span class="type-badge ${act.type}"><i class="fas ${t.icon}"></i> ${t.name}</span>
+                    </div>
+                    <div class="act-actions">
+                        <button class="btn-complete ${act.completed ? 'completed' : ''}"
+                                onclick="toggleActivity('${act.id}')">
+                            <i class="fas ${act.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+                            ${act.completed ? 'تم ✓' : 'لم يتم'}
+                        </button>
+                        <button class="btn-delete" onclick="removeActivity('${act.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function addActivity() {
+            const day = document.getElementById('actDay').value;
+            const time = document.getElementById('actTime').value;
+            const type = document.getElementById('actType').value;
+            const name = document.getElementById('actName').value.trim();
+
+            if (!time || !name) {
+                showToast('يرجى إدخال الوقت واسم النشاط', 'error');
+                return;
+            }
+
+            await addActivityToStores({
+                day, time, type, name,
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+
+            document.getElementById('actTime').value = '';
+            document.getElementById('actName').value = '';
+            selectedDay = day;
+            renderDayTabs();
+            renderActivities();
+            showToast('تم إضافة النشاط ⏰', 'success');
+        }
+
+        async function toggleActivity(activityId) {
+            const act = allActivities.find(a => a.id === activityId);
+            if (!act) return;
+            await updateActivityStores(activityId, { completed: !act.completed });
+            renderDayTabs();
+            renderActivities();
+            if (!act.completed) showToast('أحسنت! نشاط مكتمل ✅', 'success');
+        }
+
+        async function removeActivity(activityId) {
+            if (!confirm('هل أنت متأكد من حذف هذا النشاط؟')) return;
+            await deleteActivityStores(activityId);
+            renderDayTabs();
+            renderActivities();
+        }
+
+        // جدول مقترح لليوم المحدد
+        async function addSuggestedDay() {
+            const suggestions = [
+                { time: '05:00', type: 'health',        name: '🌅 الاستيقاظ ورياضة خفيفة' },
+                { time: '06:00', type: 'study',         name: '📖 مراجعة دروس الأمس' },
+                { time: '08:00', type: 'study',         name: '✍️ مذاكرة اللغة العربية' },
+                { time: '10:00', type: 'study',         name: '🇬🇧 مذاكرة اللغة الإنجليزية' },
+                { time: '12:30', type: 'health',        name: '🍽️ غداء صحي وقيلولة قصيرة' },
+                { time: '16:00', type: 'study',         name: '🔬 مذاكرة علم الأحياء' },
+                { time: '17:30', type: 'entertainment', name: '⚽ وقت اللعب والراحة' },
+                { time: '20:30', type: 'study',         name: '🕌 مراجعة التربية الإسلامية' },
+                { time: '22:30', type: 'health',        name: '🌙 النوم مبكراً' }
+            ];
+
+            for (const s of suggestions) {
+                await addActivityToStores({
+                    day: selectedDay, time: s.time, type: s.type, name: s.name,
+                    completed: false, createdAt: new Date().toISOString()
+                });
+            }
+            renderDayTabs();
+            renderActivities();
+            showToast('تم تحميل جدول مقترح لليوم ✨ عدّله كما تشاء!', 'success');
+        }
+
+        // ===== مؤقت بومودورو =====
+        let pomoInterval = null;
+        let pomoSeconds = 25 * 60;
+        let pomoMode = 'focus';
+
+        function updatePomoDisplay() {
+            const m = Math.floor(pomoSeconds / 60);
+            const s = pomoSeconds % 60;
+            document.getElementById('pomoDisplay').textContent =
+                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function startPomo() {
+            if (pomoInterval) return;
+            pomoInterval = setInterval(() => {
+                pomoSeconds--;
+                if (pomoSeconds <= 0) {
+                    clearInterval(pomoInterval);
+                    pomoInterval = null;
+                    if (pomoMode === 'focus') {
+                        pomoMode = 'break';
+                        pomoSeconds = 5 * 60;
+                        document.getElementById('pomoLabel').textContent = '☕ وقت الراحة! 5 دقائق';
+                        showToast('انتهت جلسة التركيز! خذ راحة 5 دقائق ☕', 'success');
+                    } else {
+                        pomoMode = 'focus';
+                        pomoSeconds = 25 * 60;
+                        document.getElementById('pomoLabel').textContent = '🍅 جلسة تركيز جديدة: 25 دقيقة';
+                        showToast('انتهت الراحة! لنبدأ جلسة تركيز جديدة 🍅', 'success');
+                    }
+                }
+                updatePomoDisplay();
+            }, 1000);
+        }
+
+        function pausePomo() {
+            clearInterval(pomoInterval);
+            pomoInterval = null;
+        }
+
+        function resetPomo() {
+            pausePomo();
+            pomoMode = 'focus';
+            pomoSeconds = 25 * 60;
+            document.getElementById('pomoLabel').textContent = '🍅 تقنية بومودورو: 25 دقيقة تركيز ثم 5 دقائق راحة';
+            updatePomoDisplay();
+        }
+
+        // ===== الإحصائيات =====
+        function updateHomeStats() {
+            let total = 0, completed = 0;
+            for (const subjKey in subjects) {
+                let sTotal = 0, sCompleted = 0;
+                subjects[subjKey].sub.forEach(sub => {
+                    const ls = lessonsCache[sub.id] || [];
+                    sTotal += ls.length;
+                    sCompleted += ls.filter(l => l.completed).length;
+                });
+                total += sTotal;
+                completed += sCompleted;
+                const percent = sTotal > 0 ? Math.round((sCompleted / sTotal) * 100) : 0;
+                const bar = document.getElementById(`progress-${subjKey}`);
+                if (bar) bar.style.width = percent + '%';
+            }
+            document.getElementById('totalLessons').textContent = total;
+            document.getElementById('completedLessons').textContent = completed;
+            document.getElementById('streakDays').textContent = localStorage.getItem('streak') || 0;
+
+            // عدد أنشطة اليوم في بطاقة الجدول
+            const todayId = getTodayId();
+            const todayCount = allActivities.filter(a => a.day === todayId).length;
+            document.getElementById('todayActivitiesCount').textContent =
+                todayCount > 0 ? `${todayCount} نشاط اليوم` : 'نظّم أنشطتك اليومية';
+        }
+
+        function renderStats() {
+            let total = 0, completed = 0;
+            const stats = [];
+            const colors = {
+                arabic: 'var(--gradient-1)', english: 'var(--gradient-3)',
+                biology: 'var(--gradient-4)', islamic: 'var(--gradient-5)'
+            };
+            for (const subjKey in subjects) {
+                let sTotal = 0, sCompleted = 0;
+                subjects[subjKey].sub.forEach(sub => {
+                    const ls = lessonsCache[sub.id] || [];
+                    sTotal += ls.length;
+                    sCompleted += ls.filter(l => l.completed).length;
+                });
+                total += sTotal;
+                completed += sCompleted;
+                stats.push({ name: subjects[subjKey].name, total: sTotal, completed: sCompleted, color: colors[subjKey] });
+            }
+
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('statTotalLessons').textContent = total;
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statPercentage').textContent = percent + '%';
+            document.getElementById('statActivities').textContent = allActivities.length;
+
+            document.getElementById('subjectProgress').innerHTML = stats.map(s => {
+                const p = s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0;
+                return `
+                <div style="margin-bottom:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:.5rem;">
+                        <span style="font-weight:600;">${s.name}</span>
+                        <span style="color:var(--text-secondary);">${s.completed}/${s.total} (${p}%)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="fill" style="width:${p}%; background:${s.color};"></div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // النشاط القادم اليوم (فكرة إبداعية)
+        function renderNextActivity() {
+            const todayId = getTodayId();
+            const now = new Date();
+            const nowStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const upcoming = allActivities
+                .filter(a => a.day === todayId && a.time >= nowStr && !a.completed)
+                .sort((a, b) => a.time.localeCompare(b.time))[0];
+
+            const box = document.getElementById('nextActivity');
+            if (upcoming) {
+                box.classList.add('show');
+                document.getElementById('nextActivityName').textContent =
+                    `${formatTime12(upcoming.time)} - ${upcoming.name}`;
+            } else {
+                box.classList.remove('show');
+            }
+        }
+
+        // ===== حكمة اليوم =====
+        const quotes = [
+            { text: "العلم نور والجهل ظلام" },
+            { text: "من سلك طريقاً يلتمس فيه علماً سهل الله له طريقاً إلى الجنة" },
+            { text: "العلم في الصغر كالنقش على الحجر" },
+            { text: "خير جليس في الزمان كتاب" },
+            { text: "من جدّ وجد، ومن زرع حصد" },
+            { text: "لا تؤجل عمل اليوم إلى الغد" },
+            { text: "العلم يبني بيوتاً لا عماد لها" }
+        ];
+
+        function setDailyQuote() {
+            const day = new Date().getDate();
+            document.getElementById('dailyQuote').textContent = `"${quotes[day % quotes.length].text}"`;
+        }
+
+        function celebrateProgress() {
+            let streak = parseInt(localStorage.getItem('streak') || 0);
+            const today = new Date().toDateString();
+            if (localStorage.getItem('lastStudyDate') !== today) {
+                streak++;
+                localStorage.setItem('streak', streak);
+                localStorage.setItem('lastStudyDate', today);
+            }
+        }
+
+        // ===== اختصارات لوحة المفاتيح =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.getElementById('addLessonForm').classList.remove('show');
+            if (e.key === 'Enter' && document.activeElement.id === 'actName') addActivity();
+            if (e.key === 'Enter' && document.activeElement.id === 'lessonName') saveLesson();
+        });
+
+        // ===== التهيئة =====
+        window.addEventListener('load', async () => {
+            setDailyQuote();
+            await checkFirebase();
+            await loadAllLessons();
+            await loadAllActivities();
+            updateHomeStats();
+            renderNextActivity();
+            // تعبئة قائمة الأيام في نموذج الإضافة
+            document.getElementById('actDay').innerHTML =
+                DAYS.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+            document.getElementById('actDay').value = getTodayId();
+        });
+    </script>
+</body>
+</html>
