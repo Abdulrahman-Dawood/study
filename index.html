@@ -820,19 +820,6 @@
     .toast.success { border-color: #5c8a4a; box-shadow: inset 0 1px 0 rgba(232, 212, 160, .3), 0 10px 30px rgba(0,0,0,.5), 0 0 20px rgba(92, 138, 74, .5); }
     .toast.error { border-color: #b22222; box-shadow: inset 0 1px 0 rgba(232, 212, 160, .3), 0 10px 30px rgba(0,0,0,.5), 0 0 20px rgba(178, 34, 34, .5); }
 
-    /* ===================== شارة Firebase ===================== */
-    .firebase-status {
-        position: fixed; bottom: 20px; right: 20px;
-        padding: 8px 16px; border-radius: 20px;
-        font-size: .78rem; display: flex; align-items: center; gap: 8px;
-        z-index: 999;
-        border: 1px solid;
-        background: linear-gradient(180deg, #4a3220 0%, #2a1a0f 100%);
-        box-shadow: inset 0 1px 0 rgba(232, 212, 160, .2), 0 4px 12px rgba(0,0,0,.4);
-    }
-    .firebase-status.connected { color: #7ac07a; border-color: #4a6b3a; }
-    .firebase-status.disconnected { color: #d97a7a; border-color: #8b2e2e; }
-
     .empty-state { text-align: center; padding: 3rem; color: var(--text-secondary); }
     .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .35; color: var(--gold-dark); }
     .hidden { display: none !important; }
@@ -1662,11 +1649,6 @@
         </div>
     </div>
 
-    <div class="firebase-status disconnected" id="fbStatus">
-        <i class="fas fa-circle" style="font-size:8px;"></i>
-        <span id="fbStatusText">جاري الاتصال...</span>
-    </div>
-
     <div class="toast" id="toast">
         <i class="fas fa-info-circle"></i>
         <span id="toastText"></span>
@@ -1704,11 +1686,7 @@
         }
 
         function updateFirebaseStatus(connected) {
-            const status = document.getElementById('fbStatus');
-            const text = document.getElementById('fbStatusText');
-            status.classList.toggle('connected', connected);
-            status.classList.toggle('disconnected', !connected);
-            text.textContent = connected ? 'Firebase متصل ✓' : 'تخزين محلي (تحقق من Firestore)';
+            // تم إخفاء إشعار الحالة من واجهة الموقع
         }
 
         // ===== أدوات مساعدة =====
