@@ -828,7 +828,7 @@
             .page-header h1 { font-size: 1.45rem; line-height: 1.5; }
             .page-header p { font-size: .8rem; }
             .cards-grid { grid-template-columns: 1fr; gap: .9rem; }
-            .subject-card { padding: 1rem; }
+            .subject-card { padding: 1rem; min-width: 0; overflow: hidden; }
             .subject-card h3 { font-size: 1.05rem; }
             .subject-card p { font-size: .75rem; }
             .stats-grid { grid-template-columns: repeat(2, minmax(130px, 1fr)); gap: .8rem; margin-bottom: 1.3rem; }
@@ -844,8 +844,30 @@
             .add-activity-form .btn-add { grid-column: span 1; justify-content: center; }
             .activity-item { flex-wrap: wrap; }
             .act-main { width: 100%; order: 3; }
-            .lessons-table { font-size: .8rem; }
-            .lessons-table td { padding: 10px; }
+            .lessons-table {
+                display: block; width: 100%; border-spacing: 0; font-size: .8rem; overflow: hidden;
+            }
+            .lessons-table thead { display: none; }
+            .lessons-table tbody { display: flex; flex-direction: column; gap: .75rem; }
+            .lessons-table tr {
+                display: block; width: 100%; background: var(--bg-card-hover); border: 1px solid var(--border-color);
+                border-radius: 14px; padding: .4rem; box-sizing: border-box;
+            }
+            .lessons-table td {
+                display: flex; justify-content: space-between; align-items: center; gap: .6rem;
+                width: 100%; background: transparent; border: none; padding: 10px 12px; box-sizing: border-box;
+                border-radius: 0; text-align: right; word-break: break-word;
+            }
+            .lessons-table td:first-child,
+            .lessons-table td:last-child { border: none; border-radius: 0; }
+            .lessons-table td::before {
+                content: attr(data-label); color: var(--text-secondary); font-size: .7rem; font-weight: 700;
+                flex-shrink: 0; min-width: 70px;
+            }
+            .lesson-marker {
+                min-width: 80px; max-width: 110px; padding: 8px 10px; margin: 0 auto;
+            }
+            .lesson-marker .marker-name { font-size: .68rem; }
             .session-setup-grid { grid-template-columns: 1fr; }
             .session-active-card { flex-direction: column; gap: 1.5rem; }
             .ring-time { font-size: 2.2rem; }
@@ -1758,23 +1780,23 @@
                     const marked = !!lesson.marked;
                     return `
                     <tr>
-                        <td style="font-weight:600;">${lesson.name}</td>
-                        <td><span class="difficulty-badge ${d.cls}">${d.label}</span></td>
-                        <td>
+                        <td data-label="اسم الدرس" style="font-weight:600;">${lesson.name}</td>
+                        <td data-label="الصعوبة"><span class="difficulty-badge ${d.cls}">${d.label}</span></td>
+                        <td data-label="الحالة">
                             <button class="btn-complete ${lesson.completed ? 'completed' : ''}"
                                     onclick="toggleComplete('${lesson.id}')">
                                 <i class="fas ${lesson.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
                                 ${lesson.completed ? 'مكتمل ✓' : 'غير مكتمل'}
                             </button>
                         </td>
-                        <td>
+                        <td data-label="العلامة">
                             <div class="lesson-marker" onclick="toggleLessonMark('${lesson.id}')" title="تبديل العلامة">
                                 <span class="marker-name">${lesson.name}</span>
                                 <span class="dot ${marked ? 'green' : 'red'}"></span>
                             </div>
                         </td>
-                        <td style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
-                        <td>
+                        <td data-label="ملاحظات" style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
+                        <td data-label="حذف">
                             <button class="btn-delete" onclick="deleteLesson('${lesson.id}')">
                                 <i class="fas fa-trash"></i>
                             </button>
