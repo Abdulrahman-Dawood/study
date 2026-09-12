@@ -483,6 +483,22 @@
         .difficulty-medium { background: rgba(255,152,0,.2); color: #FF9800; }
         .difficulty-hard { background: rgba(244,67,54,.2); color: #F44336; }
 
+        .lesson-marker {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 8px; min-width: 110px; font-size: .75rem; font-weight: 700; color: var(--text-primary);
+            background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 10px 12px; text-align: center; cursor: pointer;
+        }
+        .lesson-marker .marker-name {
+            color: var(--text-primary); line-height: 1.3; font-size: .73rem; word-break: break-word;
+        }
+        .lesson-marker .dot {
+            width: 14px; height: 14px; border-radius: 50%; display: inline-block;
+            box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+        }
+        .lesson-marker .dot.green { background: var(--success); }
+        .lesson-marker .dot.red { background: var(--danger); }
+
         .btn-complete {
             background: var(--border-color); color: var(--text-secondary); border: none;
             padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all .3s;
@@ -981,6 +997,13 @@
                         <label><i class="fas fa-sticky-note"></i> ملاحظات (اختياري)</label>
                         <input type="text" id="lessonNotes" placeholder="أي ملاحظات عن الدرس..." />
                     </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label><i class="fas fa-check-circle"></i> حالة العلامة</label>
+                        <label style="display:flex; align-items:center; gap:10px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:10px; padding:12px 16px; color:var(--text-primary);">
+                            <input type="checkbox" id="lessonMarked" style="width:18px; height:18px; accent-color:var(--success);" />
+                            <span>تفعيل العلامة (النقطة خضراء)</span>
+                        </label>
+                    </div>
                     <div class="form-actions">
                         <button class="btn-back" style="margin:0;" onclick="toggleAddForm()">
                             <i class="fas fa-times"></i> إلغاء
@@ -997,6 +1020,7 @@
                             <th>اسم الدرس</th>
                             <th>الصعوبة</th>
                             <th>الحالة</th>
+                            <th>العلامة</th>
                             <th>ملاحظات</th>
                             <th>حذف</th>
                         </tr>
@@ -1715,6 +1739,7 @@
                 table.classList.remove('hidden');
                 tbody.innerHTML = lessons.map(lesson => {
                     const d = DIFF_MAP[lesson.difficulty] || DIFF_MAP.easy;
+                    const marked = !!lesson.marked;
                     return `
                     <tr>
                         <td style="font-weight:600;">${lesson.name}</td>
@@ -1725,6 +1750,12 @@
                                 <i class="fas ${lesson.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
                                 ${lesson.completed ? 'مكتمل ✓' : 'غير مكتمل'}
                             </button>
+                        </td>
+                        <td>
+                            <div class="lesson-marker" onclick="toggleLessonMark('${lesson.id}')" title="تبديل العلامة">
+                                <span class="marker-name">${lesson.name}</span>
+                                <span class="dot ${marked ? 'green' : 'red'}"></span>
+                            </div>
                         </td>
                         <td style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
                         <td>
@@ -1742,6 +1773,7 @@
             const name = document.getElementById('lessonName').value.trim();
             const difficulty = document.getElementById('lessonDifficulty').value;
             const notes = document.getElementById('lessonNotes').value.trim();
+            const marked = document.getElementById('lessonMarked').checked;
 
             if (!name) { showToast('يرجى إدخال اسم الدرس', 'error'); return; }
 
@@ -1749,6 +1781,7 @@
                 category: currentCategory,
                 name, difficulty, notes,
                 completed: false,
+                marked,
                 createdAt: new Date().toISOString()
             });
 
@@ -1756,7 +1789,16 @@
             toggleAddForm();
             document.getElementById('lessonName').value = '';
             document.getElementById('lessonNotes').value = '';
+            document.getElementById('lessonMarked').checked = false;
             showToast('تم إضافة الدرس بنجاح! 🎉', 'success');
+        }
+
+        async function toggleLessonMark(lessonId) {
+            const lesson = (lessonsCache[currentCategory] || []).find(l => l.id === lessonId);
+            if (!lesson) return;
+            await updateLessonStores(lessonId, { marked: !lesson.marked });
+            renderLessons();
+            showToast(`تم ${!lesson.marked ? 'تفعيل' : 'إلغاء'} العلامة للدرس`, 'success');
         }
 
         async function toggleComplete(lessonId) {
