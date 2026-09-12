@@ -818,12 +818,30 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .navbar { padding: 1rem; }
-            .page-header h1 { font-size: 1.7rem; }
-            .add-activity-form { grid-template-columns: 1fr 1fr; }
-            .add-activity-form .form-group:nth-child(3), .add-activity-form .form-group:nth-child(4) { grid-column: span 2; }
-            .add-activity-form .btn-add { grid-column: span 2; justify-content: center; }
+            body { font-size: 14px; }
+            .container { padding: .8rem; }
+            .navbar { padding: .75rem .9rem; }
+            .navbar .logo { font-size: 1.05rem; }
+            .nav-links { gap: .35rem; }
+            .nav-btn { padding: 7px 10px; font-size: .74rem; }
+            .page-header { margin-bottom: 1rem; }
+            .page-header h1 { font-size: 1.45rem; line-height: 1.5; }
+            .page-header p { font-size: .8rem; }
+            .cards-grid { grid-template-columns: 1fr; gap: .9rem; }
+            .subject-card { padding: 1rem; }
+            .subject-card h3 { font-size: 1.05rem; }
+            .subject-card p { font-size: .75rem; }
+            .stats-grid { grid-template-columns: repeat(2, minmax(130px, 1fr)); gap: .8rem; margin-bottom: 1.3rem; }
+            .stat-card { padding: 1rem .75rem; }
+            .stat-card .number { font-size: 1.4rem; }
+            .stat-card .label { font-size: .74rem; }
+            .lesson-section { padding: 1rem; }
+            .section-title { margin-bottom: 1rem; }
+            .section-title h2 { font-size: 1rem; }
+            .btn-add, .btn-back { padding: 9px 14px; font-size: .78rem; }
+            .add-activity-form { grid-template-columns: 1fr; }
+            .add-activity-form .form-group:nth-child(3), .add-activity-form .form-group:nth-child(4) { grid-column: span 1; }
+            .add-activity-form .btn-add { grid-column: span 1; justify-content: center; }
             .activity-item { flex-wrap: wrap; }
             .act-main { width: 100%; order: 3; }
             .lessons-table { font-size: .8rem; }
@@ -831,8 +849,11 @@
             .session-setup-grid { grid-template-columns: 1fr; }
             .session-active-card { flex-direction: column; gap: 1.5rem; }
             .ring-time { font-size: 2.2rem; }
+            .quote-box { padding: 1rem 1rem 1.2rem; }
+            .quote-box .quote { font-size: 1rem; }
             .theme-fab { width: 54px; height: 54px; font-size: 1.3rem; }
-            .theme-menu { width: 240px; }
+            .theme-menu { width: 220px; }
+            .next-activity { padding: .9rem 1rem; }
         }
     </style>
 </head>
@@ -864,11 +885,6 @@
     <div class="container">
         <!-- ===== الرئيسية ===== -->
         <div class="page active" id="page-home">
-            <div class="page-header">
-                <h1>مرحباً بك في طريقي الدراسي 📚</h1>
-                <p>نظّم وقتك، تابع دروسك، حقق أهدافك</p>
-            </div>
-
             <div class="quote-box">
                 <div class="quote" id="dailyQuote"></div>
                 <div style="opacity:.8; font-size:.85rem; margin-top:.4rem;">✨ حكمة اليوم</div>
