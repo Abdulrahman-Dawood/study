@@ -23,6 +23,8 @@
         --study: #1a5f5f;
         --fun: #7a2828;
         --health: #4a6b3a;
+        --institute: #8c5a2b;
+        --other: #5c4d9a;
 
         /* الخلفيات */
         --bg-dark: #e8dcc0;
@@ -608,9 +610,11 @@
     .type-badge.study { background: rgba(26, 95, 95, .15); color: var(--study); border-color: rgba(26, 95, 95, .4); }
     .type-badge.entertainment { background: rgba(122, 40, 40, .15); color: var(--fun); border-color: rgba(122, 40, 40, .4); }
     .type-badge.health { background: rgba(74, 107, 58, .15); color: var(--health); border-color: rgba(74, 107, 58, .4); }
+    .type-badge.institute { background: rgba(140, 90, 43, .14); color: var(--institute); border-color: rgba(140, 90, 43, .4); }
+    .type-badge.other { background: rgba(92, 77, 154, .14); color: var(--other); border-color: rgba(92, 77, 154, .4); }
 
     /* ===================== نموذج الأنشطة ===================== */
-    .add-activity-form { display: grid; grid-template-columns: 1.2fr 1fr 1.4fr 2.5fr auto; gap: .8rem; align-items: end; }
+    .add-activity-form { display: grid; grid-template-columns: 1.1fr 1.1fr 1.1fr 1.4fr 2fr auto; gap: .8rem; align-items: end; }
     .add-activity-form .form-group { margin: 0; }
 
     .activity-item {
@@ -635,6 +639,8 @@
     .activity-item.study { --type-color: var(--study); }
     .activity-item.entertainment { --type-color: var(--fun); }
     .activity-item.health { --type-color: var(--health); }
+    .activity-item.institute { --type-color: var(--institute); }
+    .activity-item.other { --type-color: var(--other); }
     .activity-item:hover { transform: translateX(-5px); box-shadow: inset 0 0 0 1px var(--gold-light), 0 8px 22px rgba(139, 115, 57, .3); }
     .activity-item.completed { opacity: .55; }
     .activity-item.completed .act-name { text-decoration: line-through; }
@@ -1567,8 +1573,12 @@
                         <select id="actDay"></select>
                     </div>
                     <div class="form-group">
-                        <label><i class="fas fa-clock"></i> الوقت</label>
-                        <input type="time" id="actTime" />
+                        <label><i class="fas fa-hourglass-start"></i> بداية النشاط</label>
+                        <input type="time" id="actStartTime" />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-hourglass-end"></i> نهاية النشاط</label>
+                        <input type="time" id="actEndTime" />
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-tags"></i> نوع النشاط</label>
@@ -1576,6 +1586,8 @@
                             <option value="study">📚 دراسي</option>
                             <option value="entertainment">🎮 ترفيهي</option>
                             <option value="health">💪 صحي</option>
+                            <option value="institute">🏫 معهد</option>
+                            <option value="other">⚠️ غير صحي</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1781,7 +1793,9 @@
         const ACTIVITY_TYPES = {
             study:         { name: 'دراسي',   icon: 'fa-book' },
             entertainment: { name: 'ترفيهي', icon: 'fa-gamepad' },
-            health:        { name: 'صحي',     icon: 'fa-heartbeat' }
+            health:        { name: 'صحي',     icon: 'fa-heartbeat' },
+            institute:     { name: 'معهد',    icon: 'fa-school' },
+            other:         { name: 'غير صحي', icon: 'fa-triangle-exclamation' }
         };
 
         function getTodayId() {
@@ -2758,14 +2772,16 @@
 
             const dayActs = allActivities
                 .filter(a => a.day === selectedDay)
-                .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+                .sort((a, b) => ((a.startTime || a.time || '23:59').localeCompare(b.startTime || b.time || '23:59')));
 
-            const counts = { study: 0, entertainment: 0, health: 0 };
+            const counts = { study: 0, entertainment: 0, health: 0, institute: 0, other: 0 };
             dayActs.forEach(a => { if (counts[a.type] !== undefined) counts[a.type]++; });
             statsDiv.innerHTML = `
                 <span class="type-badge study"><i class="fas fa-book"></i> دراسي: ${counts.study}</span>
                 <span class="type-badge entertainment"><i class="fas fa-gamepad"></i> ترفيهي: ${counts.entertainment}</span>
                 <span class="type-badge health"><i class="fas fa-heartbeat"></i> صحي: ${counts.health}</span>
+                <span class="type-badge institute"><i class="fas fa-school"></i> معهد: ${counts.institute}</span>
+                <span class="type-badge other"><i class="fas fa-triangle-exclamation"></i> غير صحي: ${counts.other}</span>
             `;
 
             if (dayActs.length === 0) {
@@ -2779,9 +2795,12 @@
 
             list.innerHTML = dayActs.map(act => {
                 const t = ACTIVITY_TYPES[act.type] || ACTIVITY_TYPES.study;
+                const start = act.startTime || act.time;
+                const end = act.endTime;
+                const timeDisplay = start ? (end ? `${formatTime12(start)} - ${formatTime12(end)}` : formatTime12(start)) : 'غير محدد';
                 return `
                 <div class="activity-item ${act.type} ${act.completed ? 'completed' : ''}">
-                    <div class="act-time"><i class="far fa-clock"></i> ${formatTime12(act.time)}</div>
+                    <div class="act-time"><i class="far fa-clock"></i> ${timeDisplay}</div>
                     <div class="act-main">
                         <div class="act-name">${act.name}</div>
                         <span class="type-badge ${act.type}"><i class="fas ${t.icon}"></i> ${t.name}</span>
@@ -2802,22 +2821,34 @@
 
         async function addActivity() {
             const day = document.getElementById('actDay').value;
-            const time = document.getElementById('actTime').value;
+            const startTime = document.getElementById('actStartTime').value;
+            const endTime = document.getElementById('actEndTime').value;
             const type = document.getElementById('actType').value;
             const name = document.getElementById('actName').value.trim();
 
-            if (!time || !name) {
-                showToast('يرجى إدخال الوقت واسم النشاط', 'error');
+            if (!startTime || !endTime || !name) {
+                showToast('يرجى إدخال بداية النشاط، نهاية النشاط، واسم النشاط', 'error');
+                return;
+            }
+
+            if (startTime >= endTime) {
+                showToast('يجب أن تكون نهاية النشاط بعد بداية النشاط', 'error');
                 return;
             }
 
             await addActivityToStores({
-                day, time, type, name,
+                day,
+                time: startTime,
+                startTime,
+                endTime,
+                type,
+                name,
                 completed: false,
                 createdAt: new Date().toISOString()
             });
 
-            document.getElementById('actTime').value = '';
+            document.getElementById('actStartTime').value = '';
+            document.getElementById('actEndTime').value = '';
             document.getElementById('actName').value = '';
             selectedDay = day;
             renderDayTabs();
@@ -2990,14 +3021,16 @@
             const now = new Date();
             const nowStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             const upcoming = allActivities
-                .filter(a => a.day === todayId && a.time >= nowStr && !a.completed)
-                .sort((a, b) => a.time.localeCompare(b.time))[0];
+                .filter(a => a.day === todayId && (a.startTime || a.time || '23:59') >= nowStr && !a.completed)
+                .sort((a, b) => (a.startTime || a.time || '23:59').localeCompare(b.startTime || b.time || '23:59'))[0];
 
             const box = document.getElementById('nextActivity');
             if (upcoming) {
                 box.classList.add('show');
-                document.getElementById('nextActivityName').textContent =
-                    `${formatTime12(upcoming.time)} - ${upcoming.name}`;
+                const start = upcoming.startTime || upcoming.time;
+                const end = upcoming.endTime;
+                const label = start ? (end ? `${formatTime12(start)} - ${formatTime12(end)}` : formatTime12(start)) : 'غير محدد';
+                document.getElementById('nextActivityName').textContent = `${label} - ${upcoming.name}`;
             } else {
                 box.classList.remove('show');
             }
