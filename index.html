@@ -2222,7 +2222,10 @@
                 tbody.innerHTML = lessons.map(lesson => {
                     const d = DIFF_MAP[lesson.difficulty] || DIFF_MAP.easy;
                     const marked = !!lesson.marked;
-                    const cardName = getLessonCardsForCurrentCategory().find(card => card.id === lesson.cardId)?.name || 'بدون بطاقة';
+                    const cards = getLessonCardsForCurrentCategory();
+                    const cardOptions = cards.length
+                        ? cards.map(card => `<option value="${card.id}" ${lesson.cardId === card.id ? 'selected' : ''}>${card.name}</option>`).join('')
+                        : '<option value="">لا توجد بطاقات</option>';
                     return `
                     <tr>
                         <td data-label="اسم الدرس" style="font-weight:600;">${lesson.name}</td>
@@ -2240,7 +2243,11 @@
                                 <span class="dot ${marked ? 'green' : 'red'}"></span>
                             </div>
                         </td>
-                        <td data-label="البطاقة" style="color:var(--text-secondary); font-size:.83rem;">${cardName}</td>
+                        <td data-label="البطاقة" style="color:var(--text-secondary); font-size:.83rem;">
+                            <select class="lesson-card-select" onchange="updateLessonCard('${lesson.id}', this.value)" style="width:100%; min-width:130px; padding:6px 8px; border-radius:10px; border:1px solid var(--border-color); background:rgba(255,255,255,.06); color:var(--text-primary);">
+                                ${cardOptions}
+                            </select>
+                        </td>
                         <td data-label="ملاحظات" style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
                         <td data-label="حذف">
                             <button class="btn-delete" onclick="deleteLesson('${lesson.id}')">
@@ -2251,6 +2258,20 @@
                 }).join('');
             }
             updateProgressBar(lessons);
+        }
+
+        async function updateLessonCard(lessonId, cardId) {
+            if (!lessonId) return;
+            const cards = getLessonCardsForCurrentCategory();
+            if (!cards.length) {
+                showToast('لا توجد بطاقات لربط هذا الدرس بها', 'info');
+                return;
+            }
+            const lesson = (lessonsCache[currentCategory] || []).find(l => l.id === lessonId);
+            if (!lesson) return;
+            await updateLessonStores(lessonId, { cardId: cardId || null });
+            renderLessons();
+            showToast('تم تحديث بطاقة الدرس بنجاح', 'success');
         }
 
         async function saveLesson() {
