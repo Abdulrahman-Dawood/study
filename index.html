@@ -13,345 +13,38 @@
     
     <style>
         :root {
-            --primary: #6C63FF;
-            --secondary: #FF6584;
-            --success: #4CAF50;
-            --warning: #FF9800;
-            --danger: #F44336;
-            --study: #4facfe;
-            --fun: #fa709a;
-            --health: #43e97b;
-            --bg-dark: #0F0F1A;
-            --bg-card: #1A1A2E;
-            --bg-card-hover: #16213E;
-            --text-primary: #FFFFFF;
-            --text-secondary: #A0A0B0;
-            --border-color: #2A2A4A;
-            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --nav-bg: rgba(15,15,26,.9);
-            --primary-soft: rgba(108,99,255,.15);
-            --active-glow: 0 8px 20px rgba(108,99,255,.4);
-            --hover-glow: 0 20px 40px rgba(108,99,255,.3);
-            --btn-glow: 0 10px 20px rgba(108,99,255,.4);
+            --primary: #3b4b5c;
+            --secondary: #51657d;
+            --success: #2a7f5e;
+            --warning: #b37b2d;
+            --danger: #c34f4f;
+            --study: #4c5f7a;
+            --fun: #6d7d8f;
+            --health: #4e7d66;
+            --bg-dark: #ececec;
+            --bg-card: #f3f3f3;
+            --bg-card-hover: #e9ecef;
+            --text-primary: #111827;
+            --text-secondary: #485668;
+            --border-color: #d8dfe7;
+            --gradient-1: #e7edf5;
+            --gradient-2: #e7edf5;
+            --gradient-3: #e7edf5;
+            --gradient-4: #e7edf5;
+            --gradient-5: #e7edf5;
+            --nav-bg: rgba(245,245,245,.97);
+            --primary-soft: rgba(59,75,92,.08);
+            --active-glow: 0 8px 18px rgba(59,75,92,.12);
+            --hover-glow: 0 10px 22px rgba(59,75,92,.08);
+            --btn-glow: 0 8px 18px rgba(59,75,92,.12);
         }
 
-        /* ==================================================
-           ⚡ الثيم 1: سايبربانك — هيكل: قائمة جانبية + حواف مقطوعة
-           ================================================== */
-        body[data-theme="cyberpunk"] {
-            --primary: #00F0FF; --secondary: #FF2E88; --success: #39FF14;
-            --warning: #FFE600; --danger: #FF3131;
-            --study: #00F0FF; --fun: #FF2E88; --health: #39FF14;
-            --bg-dark: #030304; --bg-card: #0B0B11; --bg-card-hover: #11121B;
-            --text-primary: #E8FBFF; --text-secondary: #6E8291;
-            --border-color: #16323C;
-            --gradient-1: linear-gradient(135deg, #00F0FF 0%, #0080FF 100%);
-            --gradient-2: linear-gradient(135deg, #FF2E88 0%, #FF9E00 100%);
-            --gradient-3: linear-gradient(135deg, #00F0FF 0%, #7000FF 100%);
-            --gradient-4: linear-gradient(135deg, #39FF14 0%, #00F0FF 100%);
-            --gradient-5: linear-gradient(135deg, #FFE600 0%, #FF2E88 100%);
-            --nav-bg: rgba(4,4,7,.96);
-            --primary-soft: rgba(0,240,255,.12);
-            --active-glow: 0 0 20px rgba(0,240,255,.55);
-            --hover-glow: 0 0 32px rgba(0,240,255,.3);
-            --btn-glow: 0 0 18px rgba(0,240,255,.5);
-        }
-        body[data-theme="cyberpunk"] .bg-animation {
-            opacity: 1;
-            background-image:
-                linear-gradient(rgba(0,240,255,.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,240,255,.05) 1px, transparent 1px);
-            background-size: 42px 42px;
-        }
-        .scanlines {
-            position: fixed; inset: 0; pointer-events: none; z-index: 9500; display: none;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
-        }
-        body[data-theme="cyberpunk"] .scanlines { display: block; opacity: .3; }
-
-        /* هيكل سايبربانك: قائمة جانبية (سطح المكتب) */
-        @media (min-width: 901px) {
-            body[data-theme="cyberpunk"] .navbar {
-                position: fixed; top: 0; right: 0; bottom: 0; left: auto;
-                width: 215px; height: 100vh;
-                flex-direction: column; align-items: stretch; justify-content: flex-start;
-                border-bottom: none; border-left: 1px solid rgba(0,240,255,.25);
-                padding: 1.8rem 1rem;
-            }
-            body[data-theme="cyberpunk"] .navbar .logo {
-                flex-direction: column; gap: 8px; font-size: 1.2rem;
-                margin-bottom: 2.4rem; font-family: 'Orbitron', sans-serif;
-                text-align: center;
-            }
-            body[data-theme="cyberpunk"] .navbar .logo i { font-size: 2.2rem; }
-            body[data-theme="cyberpunk"] .nav-links { flex-direction: column; align-items: stretch; gap: .35rem; }
-            body[data-theme="cyberpunk"] .container { margin-right: 215px; max-width: none; padding: 2rem 2.4rem; }
-            body[data-theme="cyberpunk"] .firebase-status { right: 235px; }
-            body[data-theme="cyberpunk"] .cards-grid { grid-template-columns: repeat(2, 1fr); }
-            body[data-theme="cyberpunk"] .stats-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        /* هيكل سايبربانك: حواف مقطوعة + محاذاة يمين */
-        body[data-theme="cyberpunk"] .page-header { text-align: right; margin-bottom: 2rem; }
-        body[data-theme="cyberpunk"] .page-header h1 {
-            display: inline-block; font-family: 'Orbitron', 'Cairo', sans-serif;
-            font-size: 1.9rem; letter-spacing: 1px;
-            filter: drop-shadow(0 0 14px rgba(0,240,255,.5));
-        }
-        body[data-theme="cyberpunk"] .page-header h1::after {
-            content: ''; display: block; height: 2px; margin-top: 8px;
-            background: linear-gradient(90deg, var(--primary), transparent);
-        }
-        body[data-theme="cyberpunk"] .section-title h2 { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; }
-        body[data-theme="cyberpunk"] .section-title h2::before { content: '// '; color: var(--primary); }
-        body[data-theme="cyberpunk"] .subject-card {
-            text-align: right; border-radius: 0; border: 1px solid rgba(0,240,255,.22); border-top: none;
-            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
-            background: linear-gradient(180deg, rgba(0,240,255,.06), transparent 45%), var(--bg-card);
-            box-shadow: none;
-        }
-        body[data-theme="cyberpunk"] .subject-card:hover { box-shadow: 0 0 26px rgba(0,240,255,.25); }
-        body[data-theme="cyberpunk"] .stat-card {
-            border-radius: 0; text-align: right;
-            clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
-        }
-        body[data-theme="cyberpunk"] .stat-card { display: flex; align-items: center; gap: .8rem; }
-        body[data-theme="cyberpunk"] .stat-card i { margin: 0; font-size: 1.5rem; }
-        body[data-theme="cyberpunk"] .stat-card .number { margin: 0; font-size: 1.4rem; font-family: 'Orbitron'; }
-        body[data-theme="cyberpunk"] .stat-card .label { font-size: .72rem; }
-        body[data-theme="cyberpunk"] .lesson-section,
-        body[data-theme="cyberpunk"] .day-tab,
-        body[data-theme="cyberpunk"] .pomodoro,
-        body[data-theme="cyberpunk"] .session-active-card,
-        body[data-theme="cyberpunk"] .add-lesson-form { border-radius: 0; }
-        body[data-theme="cyberpunk"] .lesson-section { border-top: 2px solid rgba(0,240,255,.35); }
-        body[data-theme="cyberpunk"] .btn-add, body[data-theme="cyberpunk"] .btn-back,
-        body[data-theme="cyberpunk"] .btn-complete, body[data-theme="cyberpunk"] .btn-ctrl,
-        body[data-theme="cyberpunk"] .nav-btn, body[data-theme="cyberpunk"] .preset-btn,
-        body[data-theme="cyberpunk"] .difficulty-badge, body[data-theme="cyberpunk"] .type-badge,
-        body[data-theme="cyberpunk"] .history-item, body[data-theme="cyberpunk"] .sess-lesson,
-        body[data-theme="cyberpunk"] .activity-item { border-radius: 0; }
-        body[data-theme="cyberpunk"] .nav-btn { border-left: 3px solid transparent; }
-        body[data-theme="cyberpunk"] .nav-btn.active {
-            background: rgba(0,240,255,.1); color: var(--primary);
-            border-left-color: var(--primary); box-shadow: none;
-        }
-        body[data-theme="cyberpunk"] .btn-add {
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        }
-        body[data-theme="cyberpunk"] .ring-time, body[data-theme="cyberpunk"] .pomo-time {
-            font-family: 'Orbitron', sans-serif;
-        }
-        body[data-theme="cyberpunk"] .subject-card,
-        body[data-theme="cyberpunk"] .lesson-section,
-        body[data-theme="cyberpunk"] .stat-card {
-            box-shadow: 0 0 16px rgba(0,240,255,.06), inset 0 0 24px rgba(0,240,255,.03);
+        body {
+            background: #ececec;
+            color: var(--text-primary);
         }
 
-        /* ==================================================
-           👑 الثيم 2: ذهبي ملكي — هيكل: أقواس + إطار + خط أميري
-           ================================================== */
-        body[data-theme="gold"] {
-            --primary: #D4AF37; --secondary: #E8C547; --success: #7CB342;
-            --warning: #FFB300; --danger: #E53935;
-            --study: #E8C547; --fun: #D4844C; --health: #7CB342;
-            --bg-dark: #0C0906; --bg-card: #171207; --bg-card-hover: #201809;
-            --text-primary: #FDF6E3; --text-secondary: #A89B7C;
-            --border-color: #3D3116;
-            --gradient-1: linear-gradient(135deg, #F5D547 0%, #B8860B 100%);
-            --gradient-2: linear-gradient(135deg, #E8C547 0%, #8B6914 100%);
-            --gradient-3: linear-gradient(135deg, #FFE082 0%, #6B5212 100%);
-            --gradient-4: linear-gradient(135deg, #C9A227 0%, #F5D547 100%);
-            --gradient-5: linear-gradient(135deg, #FFD700 0%, #7B5C1E 100%);
-            --nav-bg: rgba(14,10,5,.95);
-            --primary-soft: rgba(212,175,55,.14);
-            --active-glow: 0 8px 22px rgba(212,175,55,.35);
-            --hover-glow: 0 20px 40px rgba(212,175,55,.25);
-            --btn-glow: 0 10px 22px rgba(212,175,55,.35);
-        }
-        /* إطار ملكي حول الصفحة كلها */
-        body[data-theme="gold"]::before {
-            content: ''; position: fixed; inset: 8px; pointer-events: none; z-index: 5;
-            border: 1px solid rgba(212,175,55,.3); border-radius: 12px;
-            outline: 1px solid rgba(212,175,55,.12); outline-offset: 4px;
-        }
-        /* شريط علوي مركزي بخطوط زخرفية */
-        body[data-theme="gold"] .navbar {
-            flex-direction: column; justify-content: center; gap: .7rem; padding: 1.1rem;
-            background: linear-gradient(180deg, #221A0A 0%, var(--nav-bg));
-            border-bottom-color: rgba(212,175,55,.35);
-        }
-        body[data-theme="gold"] .navbar::before,
-        body[data-theme="gold"] .navbar::after {
-            content: ''; width: min(440px, 62%); height: 1px; order: 3;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-        }
-        body[data-theme="gold"] .navbar::before { order: 0; }
-        body[data-theme="gold"] .navbar .logo { font-family: 'Amiri', serif; font-size: 1.7rem; }
-        body[data-theme="gold"] .nav-links { justify-content: center; }
-        body[data-theme="gold"] .nav-btn { border-radius: 30px; border: 1px solid transparent; }
-        body[data-theme="gold"] .nav-btn.active {
-            border-color: rgba(212,175,55,.6); background: rgba(212,175,55,.12);
-            color: var(--secondary); box-shadow: none;
-        }
-        /* بطاقات بقوس ملكي + ميدالية للأيقونة */
-        body[data-theme="gold"] .subject-card {
-            border-radius: 110px 110px 22px 22px; padding: 2.6rem 1.6rem 2rem;
-            border-color: rgba(212,175,55,.3);
-            background: linear-gradient(180deg, rgba(212,175,55,.07), transparent 45%), var(--bg-card);
-        }
-        body[data-theme="gold"] .subject-card .icon {
-            border: 2px solid rgba(212,175,55,.5); border-radius: 50%;
-            padding: 14px 18px; box-shadow: 0 0 0 4px rgba(212,175,55,.1);
-        }
-        body[data-theme="gold"] .sub-card {
-            border-radius: 70px 70px 16px 16px; padding-top: 2.2rem;
-            border-color: rgba(212,175,55,.3);
-        }
-        body[data-theme="gold"] .stat-card {
-            border-color: rgba(212,175,55,.3); position: relative;
-        }
-        body[data-theme="gold"] .stat-card::before {
-            content: '✦'; position: absolute; top: 6px; right: 12px;
-            color: rgba(212,175,55,.55); font-size: .8rem;
-        }
-        body[data-theme="gold"] .stat-card::after {
-            content: '✦'; position: absolute; bottom: 6px; left: 12px;
-            color: rgba(212,175,55,.55); font-size: .8rem;
-        }
-        body[data-theme="gold"] .page-header h1 {
-            font-family: 'Amiri', serif; font-size: 2.7rem; font-weight: 700;
-            filter: drop-shadow(0 2px 10px rgba(212,175,55,.35));
-        }
-        body[data-theme="gold"] .section-title h2 { font-family: 'Amiri', serif; font-size: 1.55rem; }
-        body[data-theme="gold"] .quote-box {
-            border: 2px solid rgba(212,175,55,.45); outline: 1px solid rgba(212,175,55,.25);
-            outline-offset: 6px; border-radius: 24px; color: #241B05;
-        }
-        body[data-theme="gold"] .quote-box .quote { font-size: 1.5rem; }
-        body[data-theme="gold"] .btn-add, body[data-theme="gold"] .btn-back { border-radius: 30px; }
-        body[data-theme="gold"] .history-item { border-radius: 44px 44px 14px 14px; }
-        body[data-theme="gold"] .session-active-card {
-            border-radius: 60px 60px 24px 24px; border-color: rgba(212,175,55,.3);
-        }
-        body[data-theme="gold"] .lessons-table td { border-color: rgba(212,175,55,.22); }
-        body[data-theme="gold"] .day-tab { border-radius: 18px; }
-
-        /* ==================================================
-           🌊 الثيم 3: نور المحيط — هيكل: شريط سفلي + صفوف أفقية مسطحة
-           ================================================== */
-        body[data-theme="ocean"] {
-            --primary: #0284C7; --secondary: #E11D8F; --success: #059669;
-            --warning: #D97706; --danger: #DC2626;
-            --study: #0284C7; --fun: #E11D8F; --health: #059669;
-            --bg-dark: #EAF4FB; --bg-card: #FFFFFF; --bg-card-hover: #F0F7FD;
-            --text-primary: #0C2233; --text-secondary: #5A7184;
-            --border-color: #CFE6F5;
-            --gradient-1: linear-gradient(135deg, #38BDF8 0%, #0369A1 100%);
-            --gradient-2: linear-gradient(135deg, #F472B6 0%, #DB2777 100%);
-            --gradient-3: linear-gradient(135deg, #22D3EE 0%, #0E7490 100%);
-            --gradient-4: linear-gradient(135deg, #34D399 0%, #0D9488 100%);
-            --gradient-5: linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
-            --nav-bg: rgba(255,255,255,.94);
-            --primary-soft: rgba(2,132,199,.12);
-            --active-glow: 0 8px 20px rgba(2,132,199,.35);
-            --hover-glow: 0 20px 40px rgba(2,132,199,.2);
-            --btn-glow: 0 10px 20px rgba(2,132,199,.35);
-        }
-        body[data-theme="ocean"] .bg-animation { opacity: .14; }
-        /* شريط تنقل سفلي مثل تطبيقات الجوال */
-        body[data-theme="ocean"] .navbar {
-            position: fixed; top: auto; bottom: 0; right: 0; left: 0;
-            border-bottom: none; border-top: 1px solid var(--border-color);
-            padding: .45rem .9rem; justify-content: space-between;
-            box-shadow: 0 -4px 20px rgba(2,132,199,.08);
-        }
-        body[data-theme="ocean"] .navbar .logo { font-size: 1.05rem; gap: 6px; }
-        body[data-theme="ocean"] .navbar .logo i { font-size: 1.4rem; }
-        body[data-theme="ocean"] .nav-links { gap: .2rem; }
-        body[data-theme="ocean"] .nav-btn {
-            flex-direction: column; gap: 2px; font-size: .66rem;
-            padding: 5px 13px; border-radius: 14px;
-        }
-        body[data-theme="ocean"] .nav-btn i { font-size: 1.15rem; }
-        body[data-theme="ocean"] .nav-btn.active {
-            color: var(--primary); background: var(--primary-soft);
-        }
-        body[data-theme="ocean"] .container { padding-top: 2rem; padding-bottom: 115px; }
-        body[data-theme="ocean"] .theme-fab-wrap { bottom: 95px; }
-        body[data-theme="ocean"] .firebase-status { bottom: 95px; }
-        @media (max-width: 600px) {
-            body[data-theme="ocean"] .navbar .logo span { display: none; }
-        }
-        /* عناوين محاذاة لليمين مع شريط جانبي */
-        body[data-theme="ocean"] .page-header { text-align: right; margin-bottom: 2rem; }
-        body[data-theme="ocean"] .page-header h1 {
-            position: relative; padding-right: 16px; font-size: 2rem;
-        }
-        body[data-theme="ocean"] .page-header h1::before {
-            content: ''; position: absolute; right: 0; top: 8px; bottom: 8px;
-            width: 6px; border-radius: 4px; background: var(--gradient-1);
-        }
-        body[data-theme="ocean"] .section-title h2 {
-            position: relative; padding-right: 13px; font-size: 1.15rem;
-        }
-        body[data-theme="ocean"] .section-title h2::before {
-            content: ''; position: absolute; right: 0; top: 6px; bottom: 6px;
-            width: 4px; border-radius: 4px; background: var(--gradient-1);
-        }
-        /* بطاقات المواد = صفوف أفقية عريضة */
-        body[data-theme="ocean"] .cards-grid { grid-template-columns: 1fr; gap: 1rem; }
-        body[data-theme="ocean"] .subject-card {
-            display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
-            text-align: right; padding: 1.2rem 1.5rem; border-radius: 18px;
-            border: none; box-shadow: 0 2px 14px rgba(2,132,199,.09);
-        }
-        body[data-theme="ocean"] .subject-card:hover { transform: translateY(-3px); }
-        body[data-theme="ocean"] .subject-card .icon { order: 1; font-size: 2.3rem; margin: 0; }
-        body[data-theme="ocean"] .subject-card h3 { order: 2; margin: 0; font-size: 1.15rem; }
-        body[data-theme="ocean"] .subject-card p { order: 3; flex: 1; margin: 0; }
-        body[data-theme="ocean"] .subject-card .progress-mini { order: 4; width: 100%; margin: 4px 0 0; }
-        body[data-theme="ocean"] .subject-card::before { height: 4px; }
-        /* بطاقات إحصائيات أفقية */
-        body[data-theme="ocean"] .stats-grid { gap: 1rem; }
-        body[data-theme="ocean"] .stat-card {
-            display: flex; align-items: center; gap: .9rem; text-align: right;
-            border: none; border-radius: 18px; padding: 1rem 1.2rem;
-            box-shadow: 0 2px 14px rgba(2,132,199,.09);
-        }
-        body[data-theme="ocean"] .stat-card i { margin: 0; font-size: 1.6rem; }
-        body[data-theme="ocean"] .stat-card .number { margin: 0; font-size: 1.5rem; }
-        body[data-theme="ocean"] .stat-card .label { font-size: .74rem; }
-        /* أزرار حبوب مسطحة */
-        body[data-theme="ocean"] .btn-add, body[data-theme="ocean"] .btn-back,
-        body[data-theme="ocean"] .btn-complete, body[data-theme="ocean"] .btn-ctrl,
-        body[data-theme="ocean"] .preset-btn { border-radius: 50px; }
-        body[data-theme="ocean"] .sub-card {
-            border: none; border-radius: 18px;
-            box-shadow: 0 2px 14px rgba(2,132,199,.09);
-        }
-        body[data-theme="ocean"] .lesson-section { border: none; border-radius: 20px; box-shadow: 0 2px 14px rgba(2,132,199,.09); }
-        body[data-theme="ocean"] .quote-box { text-align: right; padding: 1.4rem 1.6rem; border-radius: 18px; }
-        body[data-theme="ocean"] .day-tab { border-radius: 16px; border-width: 1px; }
-        body[data-theme="ocean"] .activity-item {
-            border: none; border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(2,132,199,.08);
-        }
-        body[data-theme="ocean"] .history-item { border: none; border-radius: 16px; box-shadow: 0 2px 12px rgba(2,132,199,.08); }
-        body[data-theme="ocean"] .lessons-table td { border: none; }
-        body[data-theme="ocean"] .lessons-table td:first-child { border-radius: 0 16px 16px 0; }
-        body[data-theme="ocean"] .lessons-table td:last-child { border-radius: 16px 0 0 16px; }
-        body[data-theme="ocean"] .lessons-table tr:hover td { background: rgba(2,132,199,.06); }
-        body[data-theme="ocean"] .session-active-card {
-            border: none; border-radius: 20px;
-            box-shadow: 0 2px 14px rgba(2,132,199,.09);
-        }
-        body[data-theme="ocean"] .sess-lesson { border: none; border-radius: 14px; box-shadow: 0 1px 8px rgba(2,132,199,.07); }
-        body[data-theme="ocean"] .pomodoro { border: none; border-radius: 20px; box-shadow: 0 2px 14px rgba(2,132,199,.09); }
-        body[data-theme="ocean"] .toast { box-shadow: 0 10px 30px rgba(2,132,199,.25); }
+        .scanlines { display: none; }
 
         /* ===================== الأساسيات ===================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
@@ -374,15 +67,15 @@
             overflow-wrap: anywhere; word-break: break-word;
         }
 
-        .bg-animation { position: fixed; inset: 0; z-index: -1; opacity: 0.1; pointer-events: none; transition: opacity .45s; }
+        .bg-animation { position: fixed; inset: 0; z-index: -1; opacity: .16; pointer-events: none; transition: opacity .45s; }
         .bg-animation::before {
-            content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
-            background: var(--primary); filter: blur(100px); top: 10%; right: 10%;
+            content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+            background: rgba(59,75,92,.08); filter: blur(80px); top: 10%; right: 10%;
             animation: float1 10s ease-in-out infinite;
         }
         .bg-animation::after {
-            content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%;
-            background: var(--secondary); filter: blur(100px); bottom: 10%; left: 10%;
+            content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
+            background: rgba(81,101,125,.08); filter: blur(80px); bottom: 10%; left: 10%;
             animation: float2 12s ease-in-out infinite;
         }
         @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,50px) scale(1.2)} }
@@ -414,8 +107,9 @@
         .page-header { text-align: center; margin-bottom: 2.5rem; }
         .page-header h1 {
             font-size: 2.3rem; font-weight: 900;
-            background: var(--gradient-1); -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .4rem;
+            color: var(--text-primary); margin-bottom: .4rem;
+            background: none; -webkit-background-clip: initial;
+            -webkit-text-fill-color: initial; background-clip: initial;
         }
         .page-header p { color: var(--text-secondary); font-size: 1.05rem; }
 
@@ -426,21 +120,11 @@
             cursor: pointer; transition: all .3s cubic-bezier(.4,0,.2,1);
             border: 1px solid var(--border-color); position: relative; overflow: hidden;
         }
-        .subject-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
-        .subject-card.arabic::before { background: var(--gradient-1); }
-        .subject-card.english::before { background: var(--gradient-3); }
-        .subject-card.biology::before { background: var(--gradient-4); }
-        .subject-card.islamic::before { background: var(--gradient-5); }
-        .subject-card.activities::before { background: var(--gradient-2); }
-        .subject-card.session::before { background: var(--gradient-2); }
+        .subject-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--primary); }
+        .subject-card.arabic::before, .subject-card.english::before, .subject-card.biology::before, .subject-card.islamic::before, .subject-card.activities::before, .subject-card.session::before { background: var(--primary); }
         .subject-card:hover { transform: translateY(-8px); box-shadow: var(--hover-glow); background: var(--bg-card-hover); }
-        .subject-card .icon { font-size: 3.2rem; margin-bottom: 1rem; display: inline-block; }
-        .subject-card.arabic .icon { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subject-card.english .icon { background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subject-card.biology .icon { background: var(--gradient-4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subject-card.islamic .icon { background: var(--gradient-5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subject-card.activities .icon { background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subject-card.session .icon { background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subject-card .icon { font-size: 3.2rem; margin-bottom: 1rem; display: inline-block; color: var(--primary); background: none; -webkit-background-clip: initial; -webkit-text-fill-color: initial; }
+        .subject-card.arabic .icon, .subject-card.english .icon, .subject-card.biology .icon, .subject-card.islamic .icon, .subject-card.activities .icon, .subject-card.session .icon { background: none; -webkit-background-clip: initial; -webkit-text-fill-color: initial; color: var(--primary); }
         .subject-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: .4rem; }
         .subject-card p { color: var(--text-secondary); font-size: .88rem; }
         .progress-mini { margin-top: 1rem; height: 6px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
@@ -459,7 +143,7 @@
         .section-title h2 { font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
 
         .btn-add {
-            background: var(--gradient-1); color: white; border: none; padding: 12px 24px;
+            background: var(--primary); color: #ffffff; border: none; padding: 12px 24px;
             border-radius: 12px; cursor: pointer; font-size: .95rem; font-weight: 600;
             display: flex; align-items: center; gap: 8px; transition: all .3s;
         }
@@ -523,7 +207,8 @@
         .progress-container { margin-bottom: 1.5rem; }
         .progress-header { display: flex; justify-content: space-between; margin-bottom: .5rem; }
         .progress-bar { height: 12px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
-        .progress-bar .fill { height: 100%; background: var(--gradient-4); border-radius: 10px; transition: width .5s ease; }
+        .progress-bar .fill { height: 100%; background: var(--primary); border-radius: 10px; transition: width .5s ease; }
+        .progress-mini .bar { background: var(--primary) !important; }
 
         .day-tabs-wrap { overflow-x: auto; padding-bottom: 8px; margin-bottom: 1.5rem; }
         .day-tabs { display: grid; grid-template-columns: repeat(7, minmax(100px, 1fr)); gap: 8px; min-width: 730px; }
@@ -532,7 +217,7 @@
             padding: 12px 6px; text-align: center; cursor: pointer; transition: all .3s; position: relative;
         }
         .day-tab:hover { border-color: var(--primary); transform: translateY(-3px); }
-        .day-tab.active { background: var(--gradient-1); border-color: transparent; box-shadow: var(--active-glow); }
+        .day-tab.active { background: var(--primary); border-color: transparent; box-shadow: var(--active-glow); }
         .day-tab.today:not(.active) { border-color: var(--warning); }
         .day-tab.today:not(.active)::after {
             content: 'اليوم'; position: absolute; top: -9px; right: 50%; transform: translateX(50%);
@@ -596,7 +281,7 @@
         }
         .pomo-time {
             font-size: 3.2rem; font-weight: 900; direction: ltr;
-            background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            color: var(--text-primary); background: none; -webkit-background-clip: initial; -webkit-text-fill-color: initial;
             margin-bottom: .8rem; font-variant-numeric: tabular-nums;
         }
         .pomo-btns { display: flex; gap: .6rem; justify-content: center; margin-bottom: .6rem; }
@@ -604,9 +289,7 @@
             width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
             font-size: 1.1rem; color: white; transition: all .3s;
         }
-        .pomo-btn.start { background: var(--gradient-4); }
-        .pomo-btn.pause { background: var(--gradient-5); }
-        .pomo-btn.reset { background: var(--bg-card-hover); border: 1px solid var(--border-color); }
+        .pomo-btn.start, .pomo-btn.pause, .pomo-btn.reset { background: var(--primary); color: #fff; }
         .pomo-btn:hover { transform: scale(1.1); }
         .pomo-label { color: var(--text-secondary); font-size: .85rem; }
 
@@ -617,7 +300,7 @@
         .stat-card .label { color: var(--text-secondary); font-size: .88rem; }
 
         .quote-box {
-            background: var(--gradient-1); border-radius: 20px; padding: 1.8rem; text-align: center;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.8rem; text-align: center;
             margin-bottom: 2rem; position: relative; overflow: hidden;
         }
         .quote-box::before { content: '"'; position: absolute; top: -20px; right: 20px; font-size: 8rem; opacity: .1; font-family: 'Amiri', serif; }
@@ -626,10 +309,10 @@
         .next-activity {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
             padding: 1.2rem 1.5rem; margin-bottom: 2rem; display: none;
-            align-items: center; gap: 1rem; border-right: 5px solid var(--warning);
+            align-items: center; gap: 1rem; border-right: 5px solid var(--primary);
         }
         .next-activity.show { display: flex; }
-        .next-activity i { font-size: 1.8rem; color: var(--warning); }
+        .next-activity i { font-size: 1.8rem; color: var(--primary); }
         .next-activity .na-label { color: var(--text-secondary); font-size: .8rem; }
         .next-activity .na-name { font-weight: 700; font-size: 1.05rem; }
 
@@ -661,47 +344,6 @@
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: .3; }
         .hidden { display: none !important; }
 
-        /* ===== زر الثيمات العائم ===== */
-        .theme-fab-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 9999; }
-        .theme-fab {
-            width: 62px; height: 62px; border-radius: 50%; border: none; cursor: pointer;
-            background: var(--gradient-2); color: #fff; font-size: 1.55rem;
-            box-shadow: 0 8px 26px rgba(0,0,0,.45);
-            transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-            animation: fabPulse 3s infinite;
-        }
-        .theme-fab:hover { transform: scale(1.12) rotate(18deg); }
-        @keyframes fabPulse {
-            0%,100% { box-shadow: 0 8px 26px rgba(0,0,0,.45), 0 0 0 0 rgba(128,128,128,.4); }
-            50% { box-shadow: 0 8px 26px rgba(0,0,0,.45), 0 0 0 16px rgba(128,128,128,0); }
-        }
-        .theme-menu {
-            position: absolute; bottom: 76px; left: 0;
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: .8rem; width: 265px;
-            opacity: 0; visibility: hidden; transform: translateY(16px) scale(.92);
-            transition: all .3s cubic-bezier(.34,1.56,.64,1);
-            box-shadow: 0 18px 45px rgba(0,0,0,.55);
-        }
-        .theme-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .theme-menu h4 {
-            font-size: .82rem; color: var(--text-secondary); margin-bottom: .6rem;
-            padding: 0 .4rem; display: flex; align-items: center; gap: 6px;
-        }
-        .theme-option {
-            display: flex; align-items: center; gap: .7rem; width: 100%;
-            background: none; border: 1px solid transparent; border-radius: 12px;
-            padding: .6rem .7rem; cursor: pointer; transition: all .25s;
-            color: var(--text-primary); font-family: 'Cairo'; text-align: right; font-size: .88rem;
-        }
-        .theme-option:hover { background: var(--bg-card-hover); border-color: var(--border-color); transform: translateX(-4px); }
-        .theme-option.active { border-color: var(--primary); background: var(--primary-soft); }
-        .theme-swatch { display: flex; gap: 3px; flex-shrink: 0; }
-        .theme-swatch span { width: 13px; height: 13px; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
-        .theme-option .to-name { flex: 1; font-weight: 700; }
-        .theme-option .to-check { color: var(--success); opacity: 0; transition: opacity .2s; }
-        .theme-option.active .to-check { opacity: 1; }
-
         /* ===== جلسة الدراسة ===== */
         .session-setup-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 1.5rem; align-items: start; }
         .duration-inputs { display: flex; gap: 1rem; }
@@ -732,6 +374,84 @@
         .lessons-pick-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 6px; }
         .pick-hint { color: var(--text-secondary); font-size: .78rem; margin-top: .6rem; }
 
+        .lesson-card-manager {
+            margin: 1.25rem 0 1.5rem;
+            background: rgba(255,255,255,.02);
+            border: 1px solid var(--border-color);
+            border-radius: 18px; padding: 1.1rem;
+        }
+        .lesson-card-form {
+            display: grid; grid-template-columns: 1.2fr 150px 170px auto;
+            gap: .8rem; align-items: end; margin-bottom: 1rem;
+        }
+        .lesson-card-form input[type="color"] {
+            width: 100%; height: 48px; border: 1px solid var(--border-color);
+            background: var(--bg-card); border-radius: 12px; padding: 6px;
+            cursor: pointer;
+        }
+        .lesson-card-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .lesson-card {
+            position: relative; padding: 1rem; border-radius: 18px;
+            border: 1px solid var(--border-color); background: var(--bg-card);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+            display: flex; flex-direction: column; gap: .8rem;
+        }
+        .lesson-card::before {
+            content: ''; position: absolute; inset: 0 auto 0 0; width: 6px; border-radius: 18px 0 0 18px;
+            background: var(--card-color, var(--primary));
+        }
+        .lesson-card.glass {
+            background: rgba(255,255,255,.02);
+        }
+        .lesson-card.neon {
+            background: rgba(255,255,255,.02);
+            box-shadow: none;
+        }
+        .lesson-card.soft {
+            background: var(--bg-card-hover);
+        }
+        .lesson-card.bold {
+            background: var(--bg-card);
+        }
+        .lesson-card-header {
+            display: flex; align-items: center; justify-content: space-between; gap: .7rem;
+            padding-right: .5rem;
+        }
+        .lesson-card-title-wrap {
+            display: flex; align-items: center; gap: .7rem; flex: 1; min-width: 0;
+        }
+        .lesson-card-color-dot {
+            width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,.7);
+            box-shadow: 0 0 0 2px rgba(255,255,255,.08);
+            flex-shrink: 0;
+        }
+        .lesson-card-title { font-size: 1rem; font-weight: 800; }
+        .lesson-card-meta { color: var(--text-secondary); font-size: .78rem; }
+        .lesson-card-list {
+            list-style: none; display: flex; flex-direction: column; gap: .5rem;
+            margin: 0; padding: 0;
+        }
+        .lesson-card-list li {
+            display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+            background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.04);
+            border-radius: 10px; padding: .5rem .6rem; font-size: .82rem; color: var(--text-primary);
+        }
+        .lesson-card-list li.empty-item {
+            color: var(--text-secondary); justify-content: center; text-align: center;
+        }
+        .lesson-card-list .mini-tag {
+            padding: 4px 8px; border-radius: 10px; font-size: .73rem; color: white;
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.06);
+        }
+        .lesson-card-list .mini-action {
+            background: transparent; border: none; color: var(--text-secondary); cursor: pointer;
+            font-size: .78rem;
+        }
+        .lesson-card-list .mini-action:hover { color: var(--primary); }
+
         .session-active-card {
             background: var(--bg-card); border: 1px solid var(--border-color);
             border-radius: 20px; padding: 2rem; margin-bottom: 1.5rem;
@@ -740,7 +460,7 @@
         .timer-ring { position: relative; width: 230px; height: 230px; }
         .timer-ring svg { transform: rotate(-90deg); }
         .timer-ring .ring-bg { stroke: var(--border-color); }
-        .timer-ring .ring-fill { stroke: url(#ringGrad); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+        .timer-ring .ring-fill { stroke: var(--primary); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
         .timer-ring.overtime .ring-fill { stroke: var(--danger); }
         .ring-center {
             position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -749,9 +469,9 @@
         .ring-time {
             font-size: 2.6rem; font-weight: 900; direction: ltr;
             font-variant-numeric: tabular-nums;
-            background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            color: var(--text-primary); background: none; -webkit-background-clip: initial; -webkit-text-fill-color: initial;
         }
-        .timer-ring.overtime .ring-time { background: var(--danger); -webkit-background-clip: text; }
+        .timer-ring.overtime .ring-time { background: none; color: var(--danger); -webkit-background-clip: initial; -webkit-text-fill-color: initial; }
 
         .session-info-side { flex: 1; min-width: 240px; text-align: center; }
         .session-info-side .si-subject { font-size: 1.4rem; font-weight: 800; margin-bottom: .5rem; }
@@ -771,9 +491,7 @@
             display: inline-flex; align-items: center; gap: 8px; transition: all .3s; font-family: 'Cairo';
         }
         .btn-ctrl:hover { transform: scale(1.05); }
-        .btn-ctrl.pause { background: var(--gradient-5); }
-        .btn-ctrl.resume { background: var(--gradient-4); }
-        .btn-ctrl.finish { background: var(--gradient-1); }
+        .btn-ctrl.pause, .btn-ctrl.resume, .btn-ctrl.finish { background: var(--primary); color: #fff; }
         .btn-ctrl.discard { background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--danger); }
 
         .overtime-alert {
@@ -958,37 +676,37 @@
                     <i class="fas fa-bullseye icon"></i>
                     <h3>🎯 جلسة دراسة</h3>
                     <p>مؤقت + دروسك + ملاحظاتك في مكان واحد</p>
-                    <div class="progress-mini"><div class="bar" style="background:var(--gradient-2); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" style="background:var(--primary); width:0%"></div></div>
                 </div>
                 <div class="subject-card arabic" onclick="openSubject('arabic')">
                     <i class="fas fa-language icon"></i>
                     <h3>اللغة العربية</h3>
                     <p>المنهاج والقواعد</p>
-                    <div class="progress-mini"><div class="bar" id="progress-arabic" style="background:var(--gradient-1); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" id="progress-arabic" style="background:var(--primary); width:0%"></div></div>
                 </div>
                 <div class="subject-card english" onclick="openSubject('english')">
                     <i class="fas fa-globe icon"></i>
                     <h3>اللغة الإنجليزية</h3>
                     <p>المنهاج والقواعد</p>
-                    <div class="progress-mini"><div class="bar" id="progress-english" style="background:var(--gradient-3); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" id="progress-english" style="background:var(--primary); width:0%"></div></div>
                 </div>
                 <div class="subject-card biology" onclick="openSubject('biology')">
                     <i class="fas fa-dna icon"></i>
                     <h3>علم الأحياء</h3>
                     <p>استكشف عالم الأحياء</p>
-                    <div class="progress-mini"><div class="bar" id="progress-biology" style="background:var(--gradient-4); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" id="progress-biology" style="background:var(--primary); width:0%"></div></div>
                 </div>
                 <div class="subject-card islamic" onclick="openSubject('islamic')">
                     <i class="fas fa-mosque icon"></i>
                     <h3>التربية الإسلامية</h3>
                     <p>علوم شرعية وقيم</p>
-                    <div class="progress-mini"><div class="bar" id="progress-islamic" style="background:var(--gradient-5); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" id="progress-islamic" style="background:var(--primary); width:0%"></div></div>
                 </div>
                 <div class="subject-card activities" onclick="showPage('schedule')">
                     <i class="fas fa-calendar-week icon"></i>
                     <h3>جدول الأسبوع</h3>
                     <p id="todayActivitiesCount">نظّم أنشطتك اليومية</p>
-                    <div class="progress-mini"><div class="bar" style="background:var(--gradient-2); width:0%"></div></div>
+                    <div class="progress-mini"><div class="bar" style="background:var(--primary); width:0%"></div></div>
                 </div>
             </div>
         </div>
@@ -1042,6 +760,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label><i class="fas fa-layer-group"></i> البطاقة</label>
+                        <select id="lessonCardSelect"></select>
+                    </div>
+                    <div class="form-group">
                         <label><i class="fas fa-sticky-note"></i> ملاحظات (اختياري)</label>
                         <input type="text" id="lessonNotes" placeholder="أي ملاحظات عن الدرس..." />
                     </div>
@@ -1062,6 +784,35 @@
                     </div>
                 </div>
 
+                <div class="lesson-card-manager" id="lessonCardManager">
+                    <div class="section-title">
+                        <h2><i class="fas fa-folder-open"></i> بطاقات الدروس</h2>
+                    </div>
+                    <div class="lesson-card-form">
+                        <div class="form-group" style="margin:0;">
+                            <label><i class="fas fa-pen"></i> اسم البطاقة</label>
+                            <input type="text" id="lessonCardName" placeholder="مثال: مراجعة الوحدة" />
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label><i class="fas fa-palette"></i> اللون</label>
+                            <input type="color" id="lessonCardColor" value="#6C63FF" />
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label><i class="fas fa-paint-brush"></i> النمط</label>
+                            <select id="lessonCardStyle">
+                                <option value="glass">زجاجي</option>
+                                <option value="neon">نيون</option>
+                                <option value="soft">مريح</option>
+                                <option value="bold">بارز</option>
+                            </select>
+                        </div>
+                        <button class="btn-add" onclick="saveLessonCard()" style="margin:0;">
+                            <i class="fas fa-plus"></i> إضافة بطاقة
+                        </button>
+                    </div>
+                    <div class="lesson-card-grid" id="lessonCardsGrid"></div>
+                </div>
+
                 <table class="lessons-table" id="lessonsTable">
                     <thead>
                         <tr>
@@ -1069,6 +820,7 @@
                             <th>الصعوبة</th>
                             <th>الحالة</th>
                             <th>العلامة</th>
+                            <th>البطاقة</th>
                             <th>ملاحظات</th>
                             <th>حذف</th>
                         </tr>
@@ -1337,14 +1089,6 @@
         </div>
     </div>
 
-    <!-- ===== زر الثيمات العائم ===== -->
-    <div class="theme-fab-wrap">
-        <div class="theme-menu" id="themeMenu"></div>
-        <button class="theme-fab" id="themeFab" onclick="toggleThemeMenu()" title="تغيير شكل الموقع">
-            <i class="fas fa-palette"></i>
-        </button>
-    </div>
-
     <div class="firebase-status disconnected" id="fbStatus">
         <i class="fas fa-circle" style="font-size:8px;"></i>
         <span id="fbStatusText">جاري الاتصال...</span>
@@ -1393,52 +1137,6 @@
             status.classList.toggle('disconnected', !connected);
             text.textContent = connected ? 'Firebase متصل ✓' : 'تخزين محلي (تحقق من Firestore)';
         }
-
-        // ============================================================
-        // ============ نظام الثيمات (بنية + ألوان) ===================
-        // ============================================================
-        const THEMES = [
-            { id: 'cosmic',    name: '🌌 كوني داكن — بطاقات شبكية',      swatches: ['#6C63FF', '#FF6584', '#1A1A2E'] },
-            { id: 'cyberpunk', name: '⚡ سايبربانك — قائمة جانبية',      swatches: ['#00F0FF', '#39FF14', '#FF2E88'] },
-            { id: 'gold',      name: '👑 ملكي ذهبي — أقواس وإطار',       swatches: ['#FFD700', '#B8860B', '#171207'] },
-            { id: 'ocean',     name: '🌊 المحيط — شريط سفلي وصفوف',      swatches: ['#38BDF8', '#34D399', '#FFFFFF'] }
-        ];
-
-        function toggleThemeMenu() {
-            document.getElementById('themeMenu').classList.toggle('open');
-        }
-
-        function renderThemeMenu() {
-            const current = localStorage.getItem('site_theme') || 'gold';
-            document.getElementById('themeMenu').innerHTML =
-                '<h4><i class="fas fa-shapes"></i> اختر شكل موقعك (بنية كاملة)</h4>' +
-                THEMES.map(t => `
-                <button class="theme-option ${t.id === current ? 'active' : ''}" onclick="applyTheme('${t.id}')">
-                    <span class="theme-swatch">${t.swatches.map(c => `<span style="background:${c}"></span>`).join('')}</span>
-                    <span class="to-name">${t.name}</span>
-                    <i class="fas fa-check-circle to-check"></i>
-                </button>`).join('');
-        }
-
-        function applyTheme(id) {
-            if (id === 'cosmic') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', id);
-            }
-            localStorage.setItem('site_theme', id);
-            renderThemeMenu();
-            const t = THEMES.find(x => x.id === id);
-            showToast(`تم تحويل الموقع بالكامل: ${t.name} ✨`, 'success');
-            setTimeout(() => document.getElementById('themeMenu').classList.remove('open'), 300);
-        }
-
-        document.addEventListener('click', (e) => {
-            const wrap = document.querySelector('.theme-fab-wrap');
-            if (wrap && !wrap.contains(e.target)) {
-                document.getElementById('themeMenu').classList.remove('open');
-            }
-        });
 
         // ===== أدوات مساعدة =====
         function generateId() {
@@ -1760,6 +1458,13 @@
         }
 
         function goBackFromLessons() {
+            if (currentLessonCardId) {
+                currentLessonCardId = null;
+                document.getElementById('lessonsTitle').textContent = 'جميع الدروس';
+                renderLessons();
+                showPage('lessons');
+                return;
+            }
             if (currentSubject && subjects[currentSubject]?.hasSub) {
                 showPage('subject');
             } else {
@@ -1772,11 +1477,163 @@
             document.getElementById('addLessonForm').classList.toggle('show');
         }
 
-        function renderLessons() {
+        let currentLessonCardId = null;
+
+        function openLessonCardDetail(cardId) {
+            currentLessonCardId = cardId;
+            const card = getLessonCardsForCurrentCategory().find(c => c.id === cardId);
+            document.getElementById('lessonsTitle').textContent = card ? `${card.name}` : 'الدروس';
+            renderLessons();
+            showPage('lessons');
+        }
+
+        function getLessonCardPalette() {
+            return ['#6C63FF', '#FF6584', '#00C2A8', '#FFB800', '#7C4DFF', '#4CAF50', '#00A8E8', '#F06292'];
+        }
+
+        function getDefaultLessonCards() {
+            return getLessonCardPalette().map((color, index) => ({
+                id: generateId(),
+                name: `بطاقة ${index + 1}`,
+                color,
+                style: ['glass', 'neon', 'soft', 'bold'][index % 4]
+            }));
+        }
+
+        function getLessonCardsForCurrentCategory() {
+            if (!currentCategory) return [];
+            const key = `lesson_cards_${currentCategory}`;
+            let cards = getFromLocal(key);
+            if (!cards.length) {
+                cards = getDefaultLessonCards();
+                saveToLocal(key, cards);
+            }
+            cards = cards.map((card, index) => ({
+                id: card.id || generateId(),
+                name: card.name || `بطاقة ${index + 1}`,
+                color: card.color || getLessonCardPalette()[index % getLessonCardPalette().length],
+                style: card.style || 'glass'
+            }));
+            saveToLocal(key, cards);
+            return cards;
+        }
+
+        function ensureLessonCardsForExistingLessons() {
+            const cards = getLessonCardsForCurrentCategory();
             const lessons = lessonsCache[currentCategory] || [];
+            let updated = false;
+            lessons.forEach(lesson => {
+                if (!lesson.cardId || !cards.some(card => card.id === lesson.cardId)) {
+                    lesson.cardId = cards[0]?.id || null;
+                    updated = true;
+                }
+            });
+            if (updated) {
+                saveToLocal(`lessons_${currentCategory}`, lessons);
+            }
+            return cards;
+        }
+
+        function refreshLessonCardSelect() {
+            const select = document.getElementById('lessonCardSelect');
+            if (!select) return;
+            const cards = getLessonCardsForCurrentCategory();
+            select.innerHTML = cards.map(card => `<option value="${card.id}">${card.name}</option>`).join('');
+            if (cards.length) select.value = cards[0].id;
+        }
+
+        function renderLessonCardsGrid() {
+            const cards = ensureLessonCardsForExistingLessons();
+            const lessons = lessonsCache[currentCategory] || [];
+            const grid = document.getElementById('lessonCardsGrid');
+            const manager = document.getElementById('lessonCardManager');
+            if (!grid) return;
+
+            if (manager) {
+                manager.style.display = currentLessonCardId ? 'none' : 'block';
+            }
+            grid.innerHTML = cards.map(card => {
+                const cardLessons = lessons.filter(l => l.cardId === card.id);
+                return `
+                <div class="lesson-card ${card.style}" style="--card-color:${card.color};" onclick="openLessonCardDetail('${card.id}')" title="فتح محتوى هذه البطاقة">
+                    <div class="lesson-card-header">
+                        <div class="lesson-card-title-wrap">
+                            <span class="lesson-card-color-dot" style="background:${card.color};"></span>
+                            <div>
+                                <div class="lesson-card-title">${card.name}</div>
+                                <div class="lesson-card-meta">${cardLessons.length} درس</div>
+                            </div>
+                        </div>
+                        <button class="btn-delete" onclick="event.stopPropagation(); deleteLessonCard('${card.id}')" title="حذف البطاقة">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="lesson-card-list">
+                        <div class="empty-item" style="padding: .5rem; border-radius: 10px; background: rgba(255,255,255,.02); text-align: center;">
+                            ${cardLessons.length ? `عرض ${cardLessons.length} درس` : 'لا توجد دروس بعد'}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function saveLessonCard() {
+            const name = document.getElementById('lessonCardName').value.trim();
+            const color = document.getElementById('lessonCardColor').value || '#6C63FF';
+            const style = document.getElementById('lessonCardStyle').value || 'glass';
+            if (!name) { showToast('يرجى إدخال اسم البطاقة', 'error'); return; }
+
+            const cards = getLessonCardsForCurrentCategory();
+            cards.push({ id: generateId(), name, color, style });
+            saveToLocal(`lesson_cards_${currentCategory}`, cards);
+            document.getElementById('lessonCardName').value = '';
+            document.getElementById('lessonCardColor').value = '#6C63FF';
+            refreshLessonCardSelect();
+            renderLessons();
+            showToast('تم إضافة البطاقة بنجاح! ✨', 'success');
+        }
+
+        function deleteLessonCard(cardId) {
+            if (!confirm('هل تريد حذف هذه البطاقة؟ سيتم نقل دروسها إلى البطاقة الأولى')) return;
+            const cards = getLessonCardsForCurrentCategory();
+            if (cards.length <= 1) {
+                showToast('يجب أن تبقى بطاقة واحدة على الأقل', 'info');
+                return;
+            }
+            const targetCard = cards.find(card => card.id !== cardId);
+            const lessons = lessonsCache[currentCategory] || [];
+            lessons.forEach(lesson => {
+                if (lesson.cardId === cardId) lesson.cardId = targetCard ? targetCard.id : null;
+            });
+            const updatedCards = cards.filter(card => card.id !== cardId);
+            saveToLocal(`lesson_cards_${currentCategory}`, updatedCards);
+            saveToLocal(`lessons_${currentCategory}`, lessons);
+            refreshLessonCardSelect();
+            renderLessons();
+            showToast('تم حذف البطاقة ونقل دروسها', 'success');
+        }
+
+        function renderLessons() {
+            const allLessons = lessonsCache[currentCategory] || [];
+            const lessons = currentLessonCardId
+                ? allLessons.filter(l => l.cardId === currentLessonCardId)
+                : allLessons;
             const tbody = document.getElementById('lessonsBody');
             const emptyState = document.getElementById('emptyLessons');
             const table = document.getElementById('lessonsTable');
+
+            ensureLessonCardsForExistingLessons();
+            refreshLessonCardSelect();
+            renderLessonCardsGrid();
+
+            if (currentLessonCardId) {
+                const activeCard = getLessonCardsForCurrentCategory().find(c => c.id === currentLessonCardId);
+                if (activeCard) {
+                    document.getElementById('lessonsTitle').textContent = activeCard.name;
+                }
+            } else if (document.getElementById('lessonsTitle')) {
+                document.getElementById('lessonsTitle').textContent = document.getElementById('lessonsTitle').textContent || 'الدروس';
+            }
 
             if (lessons.length === 0) {
                 tbody.innerHTML = '';
@@ -1788,6 +1645,7 @@
                 tbody.innerHTML = lessons.map(lesson => {
                     const d = DIFF_MAP[lesson.difficulty] || DIFF_MAP.easy;
                     const marked = !!lesson.marked;
+                    const cardName = getLessonCardsForCurrentCategory().find(card => card.id === lesson.cardId)?.name || 'بدون بطاقة';
                     return `
                     <tr>
                         <td data-label="اسم الدرس" style="font-weight:600;">${lesson.name}</td>
@@ -1805,6 +1663,7 @@
                                 <span class="dot ${marked ? 'green' : 'red'}"></span>
                             </div>
                         </td>
+                        <td data-label="البطاقة" style="color:var(--text-secondary); font-size:.83rem;">${cardName}</td>
                         <td data-label="ملاحظات" style="color:var(--text-secondary); font-size:.83rem;">${lesson.notes || '-'}</td>
                         <td data-label="حذف">
                             <button class="btn-delete" onclick="deleteLesson('${lesson.id}')">
@@ -1822,6 +1681,7 @@
             const difficulty = document.getElementById('lessonDifficulty').value;
             const notes = document.getElementById('lessonNotes').value.trim();
             const marked = document.getElementById('lessonMarked').checked;
+            const selectedCardId = document.getElementById('lessonCardSelect')?.value || getLessonCardsForCurrentCategory()[0]?.id || null;
 
             if (!name) { showToast('يرجى إدخال اسم الدرس', 'error'); return; }
 
@@ -1830,6 +1690,7 @@
                 name, difficulty, notes,
                 completed: false,
                 marked,
+                cardId: selectedCardId,
                 createdAt: new Date().toISOString()
             });
 
@@ -2526,8 +2387,8 @@
             let total = 0, completed = 0;
             const stats = [];
             const colors = {
-                arabic: 'var(--gradient-1)', english: 'var(--gradient-3)',
-                biology: 'var(--gradient-4)', islamic: 'var(--gradient-5)'
+                arabic: 'var(--primary)', english: 'var(--primary)',
+                biology: 'var(--primary)', islamic: 'var(--primary)'
             };
             for (const subjKey in subjects) {
                 let sTotal = 0, sCompleted = 0;
@@ -2616,12 +2477,8 @@
 
         // ===== التهيئة =====
         window.addEventListener('load', async () => {
-            const savedTheme = localStorage.getItem('site_theme');
-            const startupTheme = savedTheme && savedTheme !== 'cosmic' ? savedTheme : 'gold';
-
-            document.body.setAttribute('data-theme', startupTheme);
-            localStorage.setItem('site_theme', startupTheme);
-            renderThemeMenu();
+            document.body.removeAttribute('data-theme');
+            localStorage.removeItem('site_theme');
 
             setDailyQuote();
             await checkFirebase();
